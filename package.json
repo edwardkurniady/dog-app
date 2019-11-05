@@ -1,0 +1,22 @@
+{
+  "name": "skripshit",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://dudumonstr@bitbucket.org/dudumonstr/skripshit.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/dudumonstr/skripshit#readme",
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "glue": "^6.0.0",
+    "hapi": "^18.1.0",
+    "joi": "^14.3.1"
+  }
+}
