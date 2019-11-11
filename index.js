@@ -1,6 +1,9 @@
-require('dotenv').config();
+const { 
+  dotenv,
+  Glue,
+} = require('./headers');
 const config = require('./config');
-const { Glue } = require('./headers');
+dotenv();
 
 const manifest = {
   server: config.server,

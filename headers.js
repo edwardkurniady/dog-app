@@ -1,5 +1,5 @@
 module.exports = {
-  dotenv    : require('dotenv').config(),
+  dotenv    : require('dotenv').config,
   fs        : require('fs'),
   Glue      : require('glue'),
   Hapi      : require('hapi'),
