@@ -4,23 +4,20 @@
     "password": "taralite123",
     "database": "dudubase",
     "host": "localhost",
-    "dialect": "postgres",
-    "seederStorage": "sequelize"
+    "dialect": "postgres"
   },
   "test": {
     "username": "localhost",
     "password": "taralite123",
     "database": "dudubase",
     "host": "localhost",
-    "dialect": "postgres",
-    "seederStorage": "sequelize"
+    "dialect": "postgres"
   },
   "production": {
-    "username": "localhost",
-    "password": "taralite123",
+    "username": "postgres",
+    "password": "t123lite",
     "database": "dudubase",
     "host": "localhost",
-    "dialect": "postgres",
-    "seederStorage": "sequelize"
+    "dialect": "postgres"
   }
 }
