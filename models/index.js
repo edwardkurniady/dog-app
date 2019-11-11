@@ -1,13 +1,14 @@
 'use strict';
 
 const {
+  dotenv,
   fs,
   path,
   Sequelize,
 } = require('../headers');
 
 const basename = path.basename(__filename);
-const env = process.env.NODE_ENV || 'development';
+const env = dotenv.parsed.NODE_ENV;
 const config = require(__dirname + '/../config/config.json')[env];
 const db = {};
 
