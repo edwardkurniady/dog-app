@@ -1,3 +1,6 @@
+const path = require('path');
+const constants = require(path.resolve('.', 'const'));
+
 module.exports = [
   {
     method: '*',
@@ -5,7 +8,10 @@ module.exports = [
     config: {
       auth: false,
       handler: (req, h) => {
-        return h.response('The page was not found').code(404);
+        return {
+          ...constants['404'],
+          message: 'Page not found!'
+        };
       },
     },
   },

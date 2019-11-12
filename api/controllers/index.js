@@ -1,7 +1,5 @@
-const {
-  fs,
-  path,
-} = require('../../headers.js');
+const fs = require('fs');
+const path = require('path');
 
 const basename = path.basename(module.filename);
 

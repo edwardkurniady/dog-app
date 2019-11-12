@@ -1,5 +1,5 @@
 const base = 'user';
-const { Joi } = require('../../headers');
+const Joi = require('joi').extend(require('joi-date-extensions'));
 const controller = require('../controllers')[base];
 
 module.exports = [

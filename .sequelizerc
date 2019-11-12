@@ -1,0 +1,6 @@
+'use strict';
+const path = require('./headers').path;
+
+module.exports = {
+  'config': path.resolve('./config', 'config.js'),
+};

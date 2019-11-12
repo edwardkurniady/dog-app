@@ -1,5 +1,4 @@
-const { dotenv } = require('../headers');
-dotenv();
+require('dotenv').config();
 
 const defaultConfig = {
   username: "localhost",
