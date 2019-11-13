@@ -15,6 +15,7 @@
   "homepage": "https://bitbucket.org/dudumonstr/skripshit#readme",
   "dependencies": {
     "bounce": "^1.2.3",
+    "crypto": "^1.0.1",
     "dotenv": "^8.2.0",
     "glue": "^6.0.0",
     "hapi": "^18.1.0",
