@@ -29,6 +29,7 @@ module.exports = [
           password: Joi.string().required(),
           phoneNumber: Joi.string().required(),
           placeOfBirth: Joi.string().required(),
+          email: Joi.string().email().required(),
           dateOfBirth: Joi.date().format('DD-MM-YYYY').required(),
         },
       },
