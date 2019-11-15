@@ -3,12 +3,12 @@ const Model = require(path.resolve('.', 'models'));
 
 module.exports = async (model, payload, keys) => {
   keys = Array.isArray(keys) ? keys : [ keys ];
-  const options = {};
+  const where = {};
   keys.forEach(key => {
-    options[key] = payload[key];
+    where[key] = payload[key];
   });
 
   return await Model[model].findOne({
-    where: options,
+    where,
   });
 };

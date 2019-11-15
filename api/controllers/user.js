@@ -54,7 +54,7 @@ module.exports.register = async (req, h) => {
     }
   
     payload.isWalker = false;
-    insert('User', payload);
+    await insert('User', payload);
     
     return constants['200'];
   } catch(e) {
