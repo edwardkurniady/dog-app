@@ -32,6 +32,9 @@ module.exports = {
       isWalker: {
         type: Sequelize.BOOLEAN
       },
+      photo: {
+        type: Sequelize.BLOB
+      },
       dateOfBirth: {
         type: Sequelize.DATEONLY
       },

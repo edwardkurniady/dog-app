@@ -11,9 +11,10 @@ module.exports = (sequelize, DataTypes) => {
     isWalker: DataTypes.BOOLEAN,
     dateOfBirth: DataTypes.DATEONLY,
     placeOfBirth: DataTypes.STRING,
+    photo: DataTypes.BLOB,
   }, {});
-  user.associate = function(models) {
-    // associations can be defined here
+  User.associate = function(models) {
+    User.hasMany(models.Dog, { foreignKey: 'owner_id' });
   };
   return user;
 };
