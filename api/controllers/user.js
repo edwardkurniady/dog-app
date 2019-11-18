@@ -1,12 +1,6 @@
 const path = require('path');
 const Bounce = require('bounce');
 const { user } = require('../services');
-const constants = require(path.resolve('.', 'const'));
-
-const {
-  find,
-  insert,
-} = require('../services');
 const {
   crypt,
   normalize,

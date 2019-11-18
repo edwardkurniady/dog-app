@@ -14,6 +14,8 @@ module.exports = [
           breed_id: Joi.number().required(),
           age: Joi.number().required(),
           weight: Joi.number().required(),
+          photo: Joi.object(),
+          special_needs: Joi.string(),
         },
       },
     },
