@@ -23,6 +23,7 @@ module.exports = [
       handler : controller.register,
       validate: {
         payload: {
+          photo: Joi.object(),
           name: Joi.string().required(),
           gender: Joi.string().required(),
           address: Joi.string().required(),
@@ -30,6 +31,7 @@ module.exports = [
           phoneNumber: Joi.string().required(),
           placeOfBirth: Joi.string().required(),
           email: Joi.string().email().required(),
+          nik: Joi.string().length(16).regex(/[0-9]+/),
           dateOfBirth: Joi.date().format('DD-MM-YYYY').required(),
         },
       },
