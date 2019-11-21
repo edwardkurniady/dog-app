@@ -37,4 +37,26 @@ module.exports = [
       },
     },
   },
+  {
+    method: 'POST',
+    path: `/${base}/update`,
+    config: {
+      handler : controller.update,
+      validate: {
+        payload: {
+          photo: Joi.object(),
+          id: Joi.number().required(),
+          name: Joi.string(),
+          gender: Joi.string(),
+          address: Joi.string(),
+          password: Joi.string(),
+          phoneNumber: Joi.string(),
+          placeOfBirth: Joi.string(),
+          email: Joi.string().email(),
+          nik: Joi.string().regex(/[0-9]{16}/),
+          dateOfBirth: Joi.date().format('DD-MM-YYYY'),
+        },
+      },
+    },
+  },
 ];

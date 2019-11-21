@@ -3,6 +3,7 @@ const root = path.resolve('.');
 
 const constants = require(`${root}/const`);
 const Model = require(`${root}/models`);
+const { dupCheck } = require(`${root}/utils`);
 
 module.exports.login = async (creds) => {
   const errResp = {
@@ -24,16 +25,15 @@ module.exports.login = async (creds) => {
 };
 
 module.exports.register = async (data) => {
-  const dupsCheck = ['phoneNumber', 'email'];
-  for (let i = 0; i < dupsCheck.length; i++) {
-    const where = {};
-    where[dupsCheck[i]] = data[dupsCheck[i]];
-    if (!(await Model.User.findOne({ where }))) continue;
-    return {
-      ...constants['409'],
-      message: `duplicate ${dupsCheck[i]}!`,
-    };
-  }
+  const {
+    key,
+    duplicate,
+  } = await dupCheck('User', ['phoneNumber', 'email'], data);
+
+  if (duplicate) return {
+    ...constants['409'],
+    message: `duplicate ${key}!`,
+  };
 
   data.isWalker = false;
 
@@ -42,6 +42,27 @@ module.exports.register = async (data) => {
     newData[attb] = data[attb];
   });
   await Model.User.create(newData);
+
+  return constants['200'];
+};
+
+module.exports.update = async (data) => {
+  const {
+    key,
+    duplicate,
+  } = await dupCheck('User', ['phoneNumber', 'email'], data);
+  const isUserData = duplicate ? duplicate.id === data.id : null;
+
+  if (duplicate && !isUserData) return {
+    ...constants['409'],
+    message: `duplicate ${key}!`,
+  };
+
+  await Model.User.update(data, {
+    where: {
+      id: data.id,
+    },
+  });
 
   return constants['200'];
 };

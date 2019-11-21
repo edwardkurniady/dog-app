@@ -7,8 +7,10 @@ const {
 } = require(path.resolve('.', 'utils'));
 
 function processCredentials(payload) {
-  payload.phoneNumber = normalize.phoneNumber(payload.phoneNumber);
-  payload.password = crypt.encrypt(payload.password);
+  if (payload.phoneNumber)
+    payload.phoneNumber = normalize.phoneNumber(payload.phoneNumber);
+  if (payload.password)
+    payload.password = crypt.encrypt(payload.password);
   return payload;
 }
 
@@ -29,6 +31,17 @@ module.exports.register = async (req, h) => {
   try {
     const payload = processCredentials(req.payload);
     return await user.register(payload);
+  } catch(e) {
+    console.error(e);
+    Bounce.rethrow(e, 'boom');
+    Bounce.rethrow(e, 'system');
+  }
+};
+
+module.exports.update = async (req, h) => {
+  try {
+    const payload = processCredentials(req.payload);
+    return await user.update(payload);
   } catch(e) {
     console.error(e);
     Bounce.rethrow(e, 'boom');

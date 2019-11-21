@@ -23,12 +23,14 @@ function createCipher (type) {
 };
 
 module.exports.encrypt = (data) => {
+  if (!data) return data;
   const cipher = createCipher('Cipher');
   const crypted = cipher.update(objectToString(data), 'utf8', 'base64');
   return crypted + cipher.final('base64');
 };
 
 module.exports.decrypt = (text) => {
+  if (!data) return data;
   const decipher = createCipher('Decipher');
   const decrypted = decipher.update(text, 'base64', 'utf8');
   return stringToObject(decrypted + decipher.final('utf8'));
