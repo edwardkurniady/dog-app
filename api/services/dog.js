@@ -14,12 +14,12 @@ module.exports.register = async (data) => {
   return constants['200'];
 };
 
-module.exports.getList = async (owner_id, options) => {
+module.exports.getList = async (ownerId, options) => {
   return await Model.Dog.findAll({
     ...options,
     raw: true,
     where: {
-      owner_id,
+      ownerId,
     },
     include: [
       {

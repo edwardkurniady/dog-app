@@ -5,7 +5,7 @@ module.exports = (sequelize, DataTypes) => {
   }, {});
   Breed.associate = function(models) {
     // associations can be defined here
-    Breed.hasMany(models.Dog, { foreignKey: 'breed_id' });
+    Breed.hasMany(models.Dog, { foreignKey: 'breedId' });
   };
   return Breed;
 };

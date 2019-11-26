@@ -8,7 +8,7 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      owner_id: {
+      ownerId: {
         type: Sequelize.INTEGER,
         references: {
           model: 'Users',
@@ -17,7 +17,7 @@ module.exports = {
         onUpdate: 'cascade',
         onDelete: 'cascade',
       },
-      breed_id: {
+      breedId: {
         type: Sequelize.INTEGER,
         references: {
           model: 'Breeds',
@@ -41,7 +41,7 @@ module.exports = {
       photo: {
         type: Sequelize.BLOB
       },
-      special_needs: {
+      specialNeeds: {
         type: Sequelize.STRING
       },
       createdAt: {

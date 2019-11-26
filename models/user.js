@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
     photo: DataTypes.BLOB,
   }, {});
   User.associate = function(models) {
-    User.hasMany(models.Dog, { foreignKey: 'owner_id' });
+    User.hasMany(models.Dog, { foreignKey: 'ownerId' });
   };
   return User;
 };
