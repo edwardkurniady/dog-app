@@ -1,14 +1,14 @@
 'use strict';
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('Dogs', {
+    return queryInterface.createTable('Posts', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      ownerId: {
+      userId: {
         type: Sequelize.INTEGER,
         references: {
           model: 'Users',
@@ -17,31 +17,16 @@ module.exports = {
         onUpdate: 'cascade',
         onDelete: 'cascade',
       },
-      breedId: {
-        type: Sequelize.INTEGER,
-        references: {
-          model: 'Breeds',
-          key: 'id',
-        },
-        onUpdate: 'cascade',
-        onDelete: 'cascade',
-      },
-      age: {
-        type: Sequelize.INTEGER
-      },
-      weight: {
-        type: Sequelize.INTEGER
-      },
-      gender: {
+      lastName: {
         type: Sequelize.STRING
       },
-      name: {
+      email: {
         type: Sequelize.STRING
       },
-      photo: {
-        type: Sequelize.BLOB
+      likes: {
+        type: Sequelize.INTEGER
       },
-      specialNeeds: {
+      content: {
         type: Sequelize.STRING
       },
       createdAt: {
@@ -55,6 +40,6 @@ module.exports = {
     });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('Dogs');
+    return queryInterface.dropTable('Posts');
   }
 };
