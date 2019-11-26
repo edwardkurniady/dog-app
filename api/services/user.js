@@ -1,6 +1,8 @@
 const path = require('path');
 const root = path.resolve('.');
+const jwt = require('jsonwebtoken');
 
+const dog = require('./dog');
 const constants = require(`${root}/const`);
 const Model = require(`${root}/models`);
 const { dupCheck } = require(`${root}/utils`);
@@ -15,13 +17,20 @@ module.exports.login = async (creds) => {
     where: {
       phoneNumber: creds.phoneNumber,
     },
+    raw: true,
   });
 
   if (!user) errResp.message = 'Phone number not registered!';
   if (user && user.password != creds.password) errResp.message = 'Wrong password!';
   if (errResp.message) return errResp;
 
-  return constants['200'];
+  return {
+    ...constants['200'],
+    session: jwt.sign({
+      ...user,
+      dogs: await dog.getList(user.id),
+    }, process.env.JWT_KEY),
+  };
 };
 
 module.exports.register = async (data) => {

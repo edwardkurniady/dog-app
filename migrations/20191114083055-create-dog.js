@@ -32,6 +32,12 @@ module.exports = {
       weight: {
         type: Sequelize.INTEGER
       },
+      gender: {
+        type: Sequelize.STRING
+      },
+      name: {
+        type: Sequelize.STRING
+      },
       photo: {
         type: Sequelize.BLOB
       },

@@ -17,6 +17,7 @@ module.exports.register = async (data) => {
 module.exports.getList = async (owner_id, options) => {
   return await Model.Dog.findAll({
     ...options,
+    raw: true,
     where: {
       owner_id,
     },

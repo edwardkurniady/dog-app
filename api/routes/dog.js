@@ -10,9 +10,11 @@ module.exports = [
       handler : controller.register,
       validate: {
         payload: {
+          name: Joi.string().required(),
           owner_id: Joi.number().required(),
           breed_id: Joi.number().required(),
           age: Joi.number().required(),
+          gender: Joi.string().required(),
           weight: Joi.number().required(),
           photo: Joi.object(),
           special_needs: Joi.string(),

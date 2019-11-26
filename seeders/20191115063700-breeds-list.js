@@ -66,6 +66,6 @@ module.exports = {
   },
 
   down: (queryInterface, _) => {
-    return queryInterface.bulkDelete('Breed', null, {});
+    return queryInterface.bulkDelete('Breeds', null, {});
   }
 };
