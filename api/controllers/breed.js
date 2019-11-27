@@ -7,7 +7,6 @@ module.exports.getList = async (req, h) => {
     return (await Model.Breed.findAll({
       attributes: {
         exclude:[
-          'id',
           'createdAt',
           'updatedAt',
         ],

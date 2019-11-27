@@ -1,6 +1,6 @@
 const Model = require('../models');
 
-module.exports = async (model, checks, data) => {
+module.exports = async (model, data, checks = ['phoneNumber', 'email']) => {
   if (!Array.isArray(checks)) checks = [ checks ];
   for (let i = 0; i < checks.length; i++) {
     if (!data[checks[i]]) continue;

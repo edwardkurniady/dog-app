@@ -1,25 +1,38 @@
 const path = require('path');
+const root = path.resolve('.');
 const Bounce = require('bounce');
-const { user } = require('../services');
+const jwt = require('jsonwebtoken');
+const constants = require(`${root}/const`);
 const {
-  crypt,
-  normalize,
-} = require(path.resolve('.', 'utils'));
-
-function processCredentials(payload) {
-  if (payload.phoneNumber)
-    payload.phoneNumber = normalize.phoneNumber(payload.phoneNumber);
-  if (payload.password)
-    payload.password = crypt.encrypt(payload.password);
-  return payload;
-}
+  dog,
+  user,
+} = require('../services');
+const {
+  dupCheck,
+  processCred,
+} = require(`${root}/utils`);
 
 module.exports.login = async (req, h) => {
   try {
-    const payload = processCredentials(req.payload);
-    const loginResp = await user.login(payload);
-    if (loginResp.error) return loginResp;
-    return loginResp;
+    const payload = processCred(req.payload);
+    const errResp = {
+      message: null,
+      ...constants['401'],
+    };
+
+    const user = await user.login(payload);
+    if (!user) errResp.message = 'Phone number not registered!';
+    if (user && user.password != creds.password) errResp.message = 'Wrong password!';
+    if (errResp.message) return errResp;
+
+    return {
+      ...user,
+      ...constants['200'],
+      dogs: await dog.getList(user.id),
+      session: jwt.sign({
+        id: user.id
+      }, process.env.JWT_KEY),
+    };
   } catch(e) {
     console.error(e);
     Bounce.rethrow(e, 'boom');
@@ -29,8 +42,19 @@ module.exports.login = async (req, h) => {
 
 module.exports.register = async (req, h) => {
   try {
-    const payload = processCredentials(req.payload);
-    return await user.register(payload);
+    const payload = processCred(req.payload);
+    const {
+      key,
+      duplicate,
+    } = await dupCheck('User', payload);
+
+    if (duplicate) return {
+      ...constants['409'],
+      message: `duplicate ${key}!`,
+    };
+    await user.register(payload);
+    
+    return constants['200'];
   } catch(e) {
     console.error(e);
     Bounce.rethrow(e, 'boom');
@@ -41,7 +65,19 @@ module.exports.register = async (req, h) => {
 module.exports.update = async (req, h) => {
   try {
     const payload = processCredentials(req.payload);
-    return await user.update(payload);
+    const {
+      key,
+      duplicate,
+    } = await dupCheck('User', payload);
+    const isUserData = duplicate ? duplicate.id === payload.id : false;
+  
+    if (duplicate && !isUserData) return {
+      ...constants['409'],
+      message: `duplicate ${key}!`,
+    };
+    await user.update(payload);
+    
+    return constants['200'];
   } catch(e) {
     console.error(e);
     Bounce.rethrow(e, 'boom');
