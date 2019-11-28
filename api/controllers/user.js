@@ -28,9 +28,9 @@ module.exports.login = async (req, h) => {
     return {
       ...usr,
       ...constants['200'],
-      dogs: await dog.getList(user.id),
+      dogs: await dog.getList(usr.id),
       session: jwt.sign({
-        id: user.id
+        id: usr.id
       }, process.env.JWT_KEY),
     };
   } catch(e) {
