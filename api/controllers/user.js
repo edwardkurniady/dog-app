@@ -22,7 +22,7 @@ module.exports.login = async (req, h) => {
 
     const usr = await user.login(payload);
     if (!usr) errResp.message = 'Phone number not registered!';
-    if (usr && usr.password != creds.password) errResp.message = 'Wrong password!';
+    if (usr && usr.password != payload.password) errResp.message = 'Wrong password!';
     if (errResp.message) return errResp;
 
     return {
