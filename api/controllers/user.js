@@ -26,9 +26,9 @@ module.exports.login = async (req, h) => {
     if (errResp.message) return errResp;
 
     return {
+      ...constants['200'],
       commonResponse: {
         ...usr,
-        ...constants['200'],
         dogs: await dog.getList(usr.id),
       },
       session: jwt.sign({
