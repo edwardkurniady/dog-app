@@ -35,6 +35,12 @@ module.exports = {
       pricing: {
         type: Sequelize.INTEGER
       },
+      rating: {
+        type: Sequelize.DOUBLE
+      },
+      raters: {
+        type: Sequelize.INTEGER
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

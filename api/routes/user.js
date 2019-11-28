@@ -7,7 +7,7 @@ module.exports = [
     method: 'POST',
     path: `/${base}/login`,
     config: {
-      handler : controller.login,
+      handler: controller.login,
       validate: {
         payload: {
           password: Joi.string().required(),
@@ -20,7 +20,7 @@ module.exports = [
     method: 'POST',
     path: `/${base}/register`,
     config: {
-      handler : controller.register,
+      handler: controller.register,
       validate: {
         payload: {
           photo: Joi.object(),
@@ -41,7 +41,7 @@ module.exports = [
     method: 'POST',
     path: `/${base}/update`,
     config: {
-      handler : controller.update,
+      handler: controller.update,
       validate: {
         payload: {
           photo: Joi.object(),

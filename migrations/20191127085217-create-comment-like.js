@@ -1,12 +1,21 @@
 'use strict';
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('Reviews', {
+    return queryInterface.createTable('CommentLikes', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
+      },
+      commentId: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'Comments',
+          key: 'id',
+        },
+        onUpdate: 'cascade',
+        onDelete: 'cascade',
       },
       userId: {
         type: Sequelize.INTEGER,
@@ -16,21 +25,6 @@ module.exports = {
         },
         onUpdate: 'cascade',
         onDelete: 'cascade',
-      },
-      walkerId: {
-        type: Sequelize.INTEGER,
-        references: {
-          model: 'Walkers',
-          key: 'id',
-        },
-        onUpdate: 'cascade',
-        onDelete: 'cascade',
-      },
-      comment: {
-        type: Sequelize.STRING
-      },
-      rating: {
-        type: Sequelize.DOUBLE
       },
       createdAt: {
         allowNull: false,
@@ -43,6 +37,6 @@ module.exports = {
     });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('Reviews');
+    return queryInterface.dropTable('CommentLikes');
   }
 };

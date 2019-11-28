@@ -18,8 +18,9 @@ module.exports = (sequelize, DataTypes) => {
     User.hasMany(models.Post, { foreignKey: 'userId' });
     User.hasMany(models.Comment, { foreignKey: 'userId' });
     User.hasOne(models.Walker, { foreignKey: 'id' });
-    User.hasMany(models.Review, { foreignKey: 'userId' });
     User.hasMany(models.Transaction, { foreignKey: 'userId' });
+    User.hasMany(models.CommentLike, { foreignKey: 'userId' });
+    User.hasMany(models.PostLike, { foreignKey: 'userId' });
   };
   return User;
 };
