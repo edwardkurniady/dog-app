@@ -20,13 +20,13 @@ module.exports.login = async (req, h) => {
       ...constants['401'],
     };
 
-    const user = await user.login(payload);
-    if (!user) errResp.message = 'Phone number not registered!';
-    if (user && user.password != creds.password) errResp.message = 'Wrong password!';
+    const usr = await user.login(payload);
+    if (!usr) errResp.message = 'Phone number not registered!';
+    if (usr && usr.password != creds.password) errResp.message = 'Wrong password!';
     if (errResp.message) return errResp;
 
     return {
-      ...user,
+      ...usr,
       ...constants['200'],
       dogs: await dog.getList(user.id),
       session: jwt.sign({
