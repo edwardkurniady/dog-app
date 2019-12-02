@@ -29,8 +29,10 @@ module.exports.register = async (data) => {
 };
 
 module.exports.update = async (data) => {
-  if (data.deletePhoto)
+  if (data.deletePhoto) {
+    data.photo = null;
     await photo.delete(data.id, 'profile');
+  }
   if (data.photo)
     data.photo = await photo.upload(data.photo, data.id, 'profile');
 
