@@ -8,7 +8,7 @@ fs.readdirSync(__dirname)
   .filter((file) => 
     file.indexOf('.') !== 0 && 
     file !== basename &&
-    ['xml', 'json'].reduce((bool, k) =>
+    ['txt', 'json'].reduce((bool, k) =>
       bool || file.slice(file.indexOf('.') + 1) === k
     , false)) 
   .forEach((file) => {
@@ -16,7 +16,7 @@ fs.readdirSync(__dirname)
       const type = file.slice(file.indexOf('.') + 1);
       constant[name] = fs.readFileSync(`./const/${file}`);
       if (type === 'json') constant[name] = JSON.parse(constant[name]);
-      if (type === 'xml') constant[name] = constant[name].toString();
+      if (type === 'txt') constant[name] = constant[name].toString();
   });
 
 module.exports = constant;

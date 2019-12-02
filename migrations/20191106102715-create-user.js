@@ -33,7 +33,7 @@ module.exports = {
         type: Sequelize.BOOLEAN
       },
       photo: {
-        type: Sequelize.BLOB
+        type: Sequelize.STRING
       },
       dateOfBirth: {
         type: Sequelize.DATEONLY

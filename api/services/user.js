@@ -1,5 +1,7 @@
 const path = require('path');
-const Model = require(path.resolve('.', 'models'));
+const root = path.resolve('.');
+const Model = require(`${root}/models`);
+const { photo } = require(`${root}/utils`);
 
 module.exports.login = async (creds) => {
   return await Model.User.findOne({
@@ -12,6 +14,8 @@ module.exports.login = async (creds) => {
 
 module.exports.register = async (data) => {
   data.isWalker = false;
+  data.photo = await photo.upload(data.photo, data.id, 'profile');
+
   const newData = {};
   Object.keys(Model.User.rawAttributes).forEach(attb => {
     newData[attb] = data[attb];
@@ -20,9 +24,18 @@ module.exports.register = async (data) => {
 };
 
 module.exports.update = async (data) => {
+  if (data.photo)
+    data.photo = await photo.upload(data.photo, data.id, 'profile');
   await Model.User.update(data, {
     where: {
       id: data.id,
     },
+  });
+};
+
+module.exports.get = async (id) => {
+  return Model.User.findOne({
+    raw: true,
+    where: { id },
   });
 };

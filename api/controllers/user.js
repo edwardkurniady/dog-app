@@ -8,6 +8,7 @@ const {
   user,
 } = require('../services');
 const {
+  auth,
   dupCheck,
   processCred,
 } = require(`${root}/utils`);
@@ -32,8 +33,10 @@ module.exports.login = async (req, h) => {
         dogs: await dog.getList(usr.id),
       },
       session: jwt.sign({
-        id: usr.id
-      }, process.env.JWT_KEY),
+        user: {
+          id: usr.id,
+        },
+      }, process.env.JWT_KEY, { expiresIn: process.env.JWT_EXPIRATION }),
     };
   } catch(e) {
     console.error(e);
@@ -54,6 +57,7 @@ module.exports.register = async (req, h) => {
       ...constants['409'],
       message: `duplicate ${key}!`,
     };
+
     await user.register(payload);
     
     return constants['200'];
@@ -66,7 +70,14 @@ module.exports.register = async (req, h) => {
 
 module.exports.update = async (req, h) => {
   try {
-    const payload = processCredentials(req.payload);
+    const session = auth(req.headers.session);
+    if (!session.decoded) return {
+      ...constants['401'],
+      message: session,
+    };
+
+    const payload = processCred(req.payload);
+    payload.id = session.decoded.user.id;
     const {
       key,
       duplicate,
@@ -79,7 +90,30 @@ module.exports.update = async (req, h) => {
     };
     await user.update(payload);
     
-    return constants['200'];
+    return {
+      ...constants['200'],
+      session: jwt.sign(session.decoded, process.env.JWT_KEY, { expiresIn: process.env.JWT_EXPIRATION })
+    };
+  } catch(e) {
+    console.error(e);
+    Bounce.rethrow(e, 'boom');
+    Bounce.rethrow(e, 'system');
+  }
+};
+
+module.exports.get = async (req, h) => {
+  try {
+    const session = auth(req.headers.session);
+    if (!session.decoded) return {
+      ...constants['401'],
+      message: session,
+    };
+  
+    const usr = await user.get(req.params.user || session.decoded.user.id);
+    return {
+      profile: usr,
+      dogs: await dog.getList(usr.id),
+    };
   } catch(e) {
     console.error(e);
     Bounce.rethrow(e, 'boom');
