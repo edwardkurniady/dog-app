@@ -29,8 +29,12 @@ module.exports.register = async (data) => {
 };
 
 module.exports.update = async (data) => {
+  if (data.deletePhoto)
+    await photo.delete(data.id, 'profile');
   if (data.photo)
     data.photo = await photo.upload(data.photo, data.id, 'profile');
+
+  delete data.deletePhoto;
   await Model.User.update(data, {
     where: {
       id: data.id,

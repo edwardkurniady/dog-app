@@ -67,6 +67,7 @@ module.exports = [
           dateOfBirth: Joi.date().format('DD-MM-YYYY'),
           nik: Joi.string().regex(/[0-9]{16}/),
           photo: Joi.object().type(Readable),
+          deletePhoto: Joi.boolean(),
         },
       },
     },

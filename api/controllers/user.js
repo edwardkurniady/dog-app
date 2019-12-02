@@ -70,20 +70,20 @@ module.exports.register = async (req, h) => {
 
 module.exports.update = async (req, h) => {
   try {
-    const session = auth(req.headers.session);
-    if (!session.decoded) return {
+    const session = auth.verify(req.headers.session);
+    if (session.error) return {
       ...constants['401'],
-      message: session,
+      message: session.error,
     };
 
     const payload = processCred(req.payload);
-    payload.id = session.decoded.user.id;
+    payload.id = session.user.id;
     const {
       key,
       duplicate,
     } = await dupCheck('User', payload);
     const isUserData = duplicate ? duplicate.id === payload.id : false;
-  
+    
     if (duplicate && !isUserData) return {
       ...constants['409'],
       message: `duplicate ${key}!`,
@@ -92,7 +92,7 @@ module.exports.update = async (req, h) => {
     
     return {
       ...constants['200'],
-      session: jwt.sign(session.decoded, process.env.JWT_KEY, { expiresIn: process.env.JWT_EXPIRATION })
+      session: auth.refresh(session),
     };
   } catch(e) {
     console.error(e);
@@ -103,16 +103,17 @@ module.exports.update = async (req, h) => {
 
 module.exports.get = async (req, h) => {
   try {
-    const session = auth(req.headers.session);
-    if (!session.decoded) return {
+    const session = auth.verify(req.headers.session);
+    if (session.error) return {
       ...constants['401'],
-      message: session,
+      message: session.error,
     };
   
-    const usr = await user.get(req.params.user || session.decoded.user.id);
+    const usr = await user.get(req.params.user || session.user.id);
     return {
       profile: usr,
       dogs: await dog.getList(usr.id),
+      session: auth.refresh(session),
     };
   } catch(e) {
     console.error(e);

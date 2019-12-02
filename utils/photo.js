@@ -22,6 +22,15 @@ module.exports.upload = async (stream, id, type) => {
   return `${storageURL}/${process.env.BUCKET_NAME}/${filename}`;
 };
 
-module.exports.delete = async () => {
+module.exports.delete = async (id, type) => {
+  const filename = `${id}/${type}`;
 
+  const storage = new Storage({
+    projectId: process.env.PROJECT_ID,
+    keyFilename: path.resolve('.', 'config/bucket.json'),
+  });
+  const bucket = storage.bucket(process.env.BUCKET_NAME);
+  const file = bucket.file(filename);
+
+  await file.delete();
 };
