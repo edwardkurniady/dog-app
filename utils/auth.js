@@ -18,6 +18,8 @@ module.exports.verify = (session) => {
       return { error: 'Login Session Expired!' };
     if (e.message.indexOf('provided') > -1)
       return { error: 'Please login first!' };
+    if (e.message === 'invalid signature')
+      return { error: 'Invalid signature!' };
     throw e;
   }
 };
