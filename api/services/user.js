@@ -5,7 +5,7 @@ const { photo } = require(`${root}/utils`);
 const { storageURL } = require(`${root}/const`);
 
 module.exports.login = async (creds) => {
-  return await Model.User.findOne({
+  return Model.User.findOne({
     raw: true,
     where: {
       phoneNumber: creds.phoneNumber,
@@ -23,7 +23,7 @@ module.exports.register = async (data) => {
   const user = await Model.User.create(newData);
   
   await photo.upload(data.photo, user.id, 'profile');
-  user.update({
+  await user.update({
     photo: `${storageURL}/${process.env.BUCKET_NAME}/${user.id}/profile`,
   });
 };
