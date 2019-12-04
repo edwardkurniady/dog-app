@@ -1,4 +1,4 @@
-const base = 'post';
+const base = 'comment';
 const Joi = require('joi').extend(require('joi-date-extensions'));
 const controller = require('../controllers')[base];
 
@@ -10,8 +10,8 @@ module.exports = [
       handler : controller.upload,
       validate: {
         payload: {
-          title: Joi.string().required(),
-          content: Joi.string().required(),
+          postId: Joi.string().required(),
+          comment: Joi.string().required(),
         },
       },
     },
@@ -24,8 +24,7 @@ module.exports = [
       validate: {
         payload: {
           id: Joi.number().required(),
-          title: Joi.string(),
-          content: Joi.string(),
+          comment: Joi.string(),
         },
       },
     },
@@ -63,7 +62,14 @@ module.exports = [
   },
   {
     method: 'GET',
-    path: `/${base}/find/{post}`,
+    path: `/${base}/getList/{post}`,
+    config: {
+      handler : controller.getList,
+    },
+  },
+  {
+    method: 'GET',
+    path: `/${base}/find/{comment}`,
     config: {
       handler : controller.find,
     },

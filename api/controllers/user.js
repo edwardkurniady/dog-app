@@ -7,7 +7,6 @@ const {
   user,
 } = require('../services');
 const {
-  auth,
   dupCheck,
   processCred,
 } = require(`${root}/utils`);
@@ -55,13 +54,7 @@ module.exports.register = async (req, h) => {
   return constants['200'];
 };
 
-module.exports.update = async (req, h) => {
-  const session = auth.verify(req.headers.session);
-  if (session.error) return {
-    ...constants['401'],
-    message: session.error,
-  };
-
+module.exports.update = async (req, h, session) => {
   const payload = processCred(req.payload);
   payload.id = session.user.id;
   const {
@@ -76,23 +69,13 @@ module.exports.update = async (req, h) => {
   };
   await user.update(payload);
   
-  return {
-    ...constants['200'],
-    session: auth.refresh(session),
-  };
+  return constants['200'];
 };
 
-module.exports.get = async (req, h) => {
-  const session = auth.verify(req.headers.session);
-  if (session.error) return {
-    ...constants['401'],
-    message: session.error,
-  };
-
+module.exports.get = async (req, h, session) => {
   const usr = await user.get(req.params.user || session.user.id);
   return {
     profile: usr,
     dogs: await dog.getList(usr.id),
-    session: auth.refresh(session),
   };
 };

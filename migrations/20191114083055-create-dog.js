@@ -39,7 +39,7 @@ module.exports = {
         type: Sequelize.STRING
       },
       photo: {
-        type: Sequelize.BLOB
+        type: Sequelize.STRING
       },
       specialNeeds: {
         type: Sequelize.STRING

@@ -7,7 +7,7 @@ module.exports = (sequelize, DataTypes) => {
     age: DataTypes.INTEGER,
     gender: DataTypes.STRING,
     weight: DataTypes.INTEGER,
-    photo: DataTypes.BLOB,
+    photo: DataTypes.STRING,
     specialNeeds: DataTypes.STRING
   }, {});
   Dog.associate = function(models) {

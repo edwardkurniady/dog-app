@@ -4,7 +4,8 @@ const { storageURL } = require(path.resolve('.', 'const'));
 
 module.exports.upload = async (stream, id, type) => {
   if (!stream) return null;
-  const filename = `${id}/${type}`;
+  const dir = type.split('/');
+  const filename = `${dir[0]}/${id}/${dir[1]}`;
 
   const storage = new Storage({
     projectId: process.env.PROJECT_ID,
@@ -23,7 +24,8 @@ module.exports.upload = async (stream, id, type) => {
 };
 
 module.exports.delete = async (id, type) => {
-  const filename = `${id}/${type}`;
+  const dir = type.split('/');
+  const filename = `${dir[0]}/${id}/${dir[1]}`;
 
   const storage = new Storage({
     projectId: process.env.PROJECT_ID,

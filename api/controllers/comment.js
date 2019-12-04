@@ -3,57 +3,69 @@ const root = path.resolve('.');
 const constants = require(`${root}/const`);
 const {
   post,
+  comment,
 } = require(`${root}/api/services`);
 
 module.exports.get = async (req, h, session) => {
-  return post.get(req.params.user || session.user.id);
+  return comment.get(req.params.user || session.user.id);
+};
+
+module.exports.getList = async (req, h) => {
+  return comment.get(req.params.post);
 };
 
 module.exports.find = async (req, h) => {
-  return post.find(req.params.post);
+  return comment.find(req.params.comment);
 };
 
 module.exports.upload = async (req, h, session) => {
   req.payload.likes = 0;
   req.payload.userId = session.user.id;
 
-  await post.upload(req.payload);
+  const p = await post.find(req.payload.postId);
+
+  if (!p) return {
+    ...constants['404'],
+    message: 'Post not found!',
+  };
+
+  await comment.upload(req.payload);
   
   return constants['200'];
 };
 
 module.exports.update = async (req, h, session) => {
-  const p = await post.find(req.payload.id);
+  const c = await comment.find(req.payload.id);
 
-  if (!p) return {
+  if (!c) return {
     ...constants['404'],
-    message: 'Post not found!',
+    message: 'Comment not found!',
   };
 
-  if (p.userId !== session.user.id) return {
+  if (c.userId !== session.user.id) return {
     ...constants['403'],
     message: 'Permission denied!',
   };
 
-  await post.update(req.payload);
+  await comment.update(req.payload);
 
   return constants['200'];
 };
 
 module.exports.delete = async (req, h, session) => {
-  const p = await post.find(req.payload.id);
+  const c = await comment.find(req.payload.id);
 
-  if (!p) return {
+  if (!c) return {
     ...constants['404'],
     message: 'Post not found!',
   };
 
-  if (p.userId !== session.user.id) return {
+  if (c.userId !== session.user.id) return {
     ...constants['403'],
     message: 'Permission denied!',
   };
 
-  await post.delete(req.payload.id);
+  await comment.delete(req.payload.id);
 
   return constants['200'];
 };
@@ -61,19 +73,19 @@ module.exports.delete = async (req, h, session) => {
 module.exports.like = async (req, h, session) => {
   const data = {
     userId: session.user.id,
-    postId: req.payload.id,
+    commentId: req.payload.id,
   };
 
-  const p = await post.find(req.payload.id);
-  if (!p) return {
+  const c = await comment.find(req.payload.id);
+  if (!c) return {
     ...constants['404'],
     message: 'Post not found!',
   };
 
-  const hasLiked = await post.hasLiked(data);
+  const hasLiked = await comment.hasLiked(data);
 
-  if (!hasLiked) await post.like(data, p.likes + 1);
-  else await post.unlike(hasLiked, p.likes - 1, p.id);
+  if (!hasLiked) await comment.like(data, c.likes + 1);
+  else await comment.unlike(hasLiked, c.likes - 1, c.id);
   
   return constants['200'];
 };

@@ -27,7 +27,7 @@ fs.readdirSync(__dirname)
       route.config.handler = async (req, h) => {
         try {
           let needAuth = true;
-          noAuth[name].forEach(na => {
+          (noAuth[name] || []).forEach(na => {
             if (route.path.indexOf(na) > -1) needAuth = false;
           });
 
@@ -37,11 +37,12 @@ fs.readdirSync(__dirname)
             message: session.error,
           };
 
-          const result = await fn(req, h);
-          return needAuth ? {
-            ...result,
-            session: auth.refresh(session),
-          } : result;
+          const result = await fn(req, h, session);
+          const resp = { result };
+          
+          if (needAuth && result.statusCode !== 403) resp.session = auth.refresh(session);
+          
+          return resp;
         } catch(e) {
           console.error(e);
           Bounce.rethrow(e, 'boom');
