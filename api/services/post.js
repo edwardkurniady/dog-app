@@ -2,18 +2,30 @@ const path = require('path');
 const root = path.resolve('.');
 const Model = require(`${root}/models`);
 
-module.exports.find = async (id) => {
-  return Model.Post.findOne({
+module.exports.find = async (id, userId) => {
+  const post = await Model.Post.findOne({
     raw: true,
     where: { id },
   });
+
+  const lbu = await this.hasLiked(userId, id);
+  if (post) post.likedByUser = lbu ? true : false;
+
+  return post;
 };
 
-module.exports.get = async (userId) => {
-  return Model.Post.findAll({
+module.exports.get = async (userId, searcher) => {
+  searcher = searcher ? searcher : userId;
+  const posts = await Model.Post.findAll({
     raw: true,
     where: { userId },
   });
+
+  for (let i = 0; i < posts.length; i++) {
+    const lbu = await this.hasLiked(searcher, posts[i].id);
+    posts[i].likedByUser = lbu ? true : false;
+  }
+  return posts;
 };
 
 module.exports.upload = async (data) => {
@@ -32,9 +44,12 @@ module.exports.delete = async (id) => {
   });
 };
 
-module.exports.hasLiked = async (data) => {
+module.exports.hasLiked = async (userId, postId) => {
   return Model.PostLike.findOne({
-    where: data,
+    where: {
+      userId,
+      postId,
+    },
   });
 };
 
@@ -45,8 +60,10 @@ module.exports.like = async (data, likes) => {
   });
 };
 
-module.exports.unlike = async (postlike, likes, id) => {
-  await postlike.destroy();
+module.exports.unlike = async (data, likes, id) => {
+  await Model.PostLike.destroy({
+    where: data,
+  });
   await Model.Post.update({ likes }, {
     where: { id },
   });

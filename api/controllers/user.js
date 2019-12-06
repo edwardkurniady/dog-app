@@ -5,11 +5,24 @@ const constants = require(`${root}/const`);
 const {
   dog,
   user,
+  post,
+  comment,
+  walker,
 } = require('../services');
 const {
   dupCheck,
   processCred,
 } = require(`${root}/utils`);
+
+const getDetails = async (userId, profile, searcher) => {
+  return {
+    profile: profile ? profile : await user.get(userId),
+    walkerInfo: await walker.get(userId),
+    dogs: await dog.getList(userId),
+    posts: await post.get(userId, searcher),
+    comments: await comment.get(userId, searcher),
+  };
+};
 
 module.exports.login = async (req, h) => {
   const payload = processCred(req.payload);
@@ -23,17 +36,21 @@ module.exports.login = async (req, h) => {
   if (usr && usr.password != payload.password) errResp.message = 'Wrong password!';
   if (errResp.message) return errResp;
 
+  delete usr.password;
+  [
+    'password',
+    'createdAt',
+    'updatedAt',
+  ].forEach(key => delete usr[key]);
+
   return {
     ...constants['200'],
-    commonResponse: {
-      ...usr,
-      dogs: await dog.getList(usr.id),
-    },
+    body: await getDetails(usr.id, usr),
     session: jwt.sign({
-      user: {
-        id: usr.id,
-      },
-    }, process.env.JWT_KEY, { expiresIn: process.env.JWT_EXPIRATION }),
+      user: { id: usr.id },
+    }, process.env.JWT_KEY, {
+      expiresIn: process.env.JWT_EXPIRATION,
+    }),
   };
 };
 
@@ -48,7 +65,6 @@ module.exports.register = async (req, h) => {
     ...constants['409'],
     message: `duplicate ${key}!`,
   };
-
   await user.register(payload);
   
   return constants['200'];
@@ -69,13 +85,15 @@ module.exports.update = async (req, h, session) => {
   };
   await user.update(payload);
   
-  return constants['200'];
+  return {
+    ...constants['200'],
+    body: await getDetails(payload.id),
+  };
 };
 
 module.exports.get = async (req, h, session) => {
-  const usr = await user.get(req.params.user || session.user.id);
-  return {
-    profile: usr,
-    dogs: await dog.getList(usr.id),
-  };
+  const userId = req.params.user || session.user.id;
+  
+  const usr = await user.get(userId);
+  return getDetails(userId, usr, session.user.id);
 };

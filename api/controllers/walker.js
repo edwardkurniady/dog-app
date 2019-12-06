@@ -5,10 +5,6 @@ const {
   user,
   walker,
 } = require('../services');
-const {
-  dupCheck,
-  processCred,
-} = require(`${root}/utils`);
 
 module.exports.register = async (req, h, session) => {
   req.payload.id = session.user.id;
@@ -18,15 +14,27 @@ module.exports.register = async (req, h, session) => {
   req.payload.raters = 0;
 
   await walker.register(req.payload);
+  await user.update({
+    id: req.payload.id,
+    isWalker: true,
+  });
 
-  return constants['200'];
+  return {
+    ...constants['200'],
+    profile: await user.get(req.payload.id),
+    walkerInfo: await walker.get(req.payload.id),
+  };
 };
 
 module.exports.update = async (req, h, session) => {
   req.payload.id = session.user.id;
   await walker.update(req.payload);
   
-  return constants['200'];
+  return {
+    ...constants['200'],
+    profile: await user.get(req.payload.id),
+    walkerInfo: await walker.get(req.payload.id),
+  };
 };
 
 module.exports.get = async (req, h, session) => {

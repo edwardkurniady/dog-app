@@ -53,7 +53,7 @@ module.exports = [
   },
   {
     method: 'GET',
-    path: `/${base}/{walker?}`,
+    path: `/${base}/get/{walker?}`,
     config: {
       handler: controller.get
     },

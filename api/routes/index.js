@@ -13,6 +13,9 @@ const noAuth = {
     'login',
     'register',
   ],
+  breed: [
+    'breed',
+  ],
 };
 
 fs.readdirSync(__dirname)
@@ -38,7 +41,7 @@ fs.readdirSync(__dirname)
           };
 
           const result = await fn(req, h, session);
-          const resp = { result };
+          const resp = Array.isArray(result) ? { result } : result;
           
           if (needAuth && result.statusCode !== 403) resp.session = auth.refresh(session);
           

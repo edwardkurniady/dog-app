@@ -10,7 +10,7 @@ module.exports = [
       handler : controller.upload,
       validate: {
         payload: {
-          postId: Joi.string().required(),
+          postId: Joi.number().required(),
           comment: Joi.string().required(),
         },
       },
@@ -24,7 +24,7 @@ module.exports = [
       validate: {
         payload: {
           id: Joi.number().required(),
-          comment: Joi.string(),
+          comment: Joi.string().required(),
         },
       },
     },

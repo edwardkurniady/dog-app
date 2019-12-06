@@ -2,25 +2,42 @@ const path = require('path');
 const root = path.resolve('.');
 const Model = require(`${root}/models`);
 
-module.exports.find = async (id) => {
-  return Model.Comment.findOne({
+module.exports.find = async (id, userId) => {
+  const comment = await Model.Comment.findOne({
     raw: true,
     where: { id },
   });
+  const lbu = await this.hasLiked(userId, id);
+  if (comment) comment.likedByUser = lbu ? true : false
+
+  return comment;
 };
 
-module.exports.getList = async (postId) => {
-  return Model.Comment.findAll({
+module.exports.getList = async (postId, searcher) => {
+  const comments = await Model.Comment.findAll({
     raw: true,
     where: { postId },
   });
+
+  for (let i = 0; i < comments.length; i++) {
+    const lbu = await this.hasLiked(searcher, comments[i].id);
+    comments[i].likedByUser = lbu ? true : false;
+  }
+  return comments;
 };
 
-module.exports.get = async (userId) => {
-  return Model.Comment.findAll({
+module.exports.get = async (userId, searcher) => {
+  searcher = searcher ? searcher : userId;
+  const comments = await Model.Comment.findAll({
     raw: true,
     where: { userId },
   });
+
+  for (let i = 0; i < comments.length; i++) {
+    const lbu = await this.hasLiked(searcher, comments[i].id);
+    comments[i].likedByUser = lbu ? true : false;
+  }
+  return comments;
 };
 
 module.exports.upload = async (data) => {
@@ -39,9 +56,12 @@ module.exports.delete = async (id) => {
   });
 };
 
-module.exports.hasLiked = async (data) => {
+module.exports.hasLiked = async (userId, commentId) => {
   return Model.CommentLike.findOne({
-    where: data,
+    where: {
+      userId,
+      commentId,
+    },
   });
 };
 
@@ -52,8 +72,10 @@ module.exports.like = async (data, likes) => {
   });
 };
 
-module.exports.unlike = async (commentlike, likes, id) => {
-  await commentlike.destroy();
+module.exports.unlike = async (data, likes, id) => {
+  await Model.CommentLike.destroy({
+    where: data,
+  });
   await Model.Comment.update({ likes }, {
     where: { id },
   });

@@ -50,5 +50,10 @@ module.exports.get = async (id) => {
   return Model.User.findOne({
     raw: true,
     where: { id },
+    attributes: {
+      exclude: [
+        'password',
+      ],
+    },
   });
 };

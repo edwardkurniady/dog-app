@@ -48,7 +48,7 @@ module.exports = [
       },
       validate: {
         payload: {
-          id: Joi.number(),
+          id: Joi.number().required(),
           name: Joi.string(),
           deletePhoto: Joi.boolean(),
           breedId: Joi.number(),
