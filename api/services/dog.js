@@ -10,14 +10,16 @@ module.exports.register = async (data) => {
     newData[attb] = attb === 'photo' ? null : data[attb];
   });
   const dog = await Model.Dog.create(newData);
+  const dogId = dog.dataValues.id;
 
-  if (!data.photo) return;
+  if (!data.photo) return dogId;
 
-  await photo.upload(data.photo, dog.id, 'dog/profile');
+  await photo.upload(data.photo, dogId, 'dog/profile');
   await dog.update({
-    photo: `${storageURL}/${process.env.BUCKET_NAME}/dog/${dog.id}/profile`,
+    photo: `${storageURL}/${process.env.BUCKET_NAME}/dog/${dogId}/profile`,
   });
-  return dog.id;
+
+  return dogId;
 };
 
 module.exports.getList = async (ownerId, options) => {

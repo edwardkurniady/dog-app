@@ -1,4 +1,5 @@
 'use strict';
+const moment = require('moment-timezone');
 
 const breeds = [
   'Akita',
@@ -55,10 +56,11 @@ module.exports = {
     return queryInterface.bulkInsert(
       'Breeds',
       breeds.map(breed => {
+        const now = new Date(moment.tz('Asia/Jakarta'));
         return {
           name: breed,
-          createdAt: new Date(),
-          updatedAt: new Date(),
+          createdAt: now,
+          updatedAt: now,
         };
       }),
       {},

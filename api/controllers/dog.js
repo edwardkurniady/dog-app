@@ -5,10 +5,9 @@ const { dog } = require('../services');
 
 module.exports.register = async (req, h, session) => {
   req.payload.ownerId = session.user.id;
-  const dogId = await dog.register(req.payload);
   return {
     ...constants['200'],
-    dog: await dog.find(dogId),
+    dog: await dog.find(await dog.register(req.payload)),
   };
 };
 

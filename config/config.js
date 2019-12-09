@@ -1,11 +1,15 @@
 require('dotenv').config();
 
 const defaultConfig = {
-  username: "localhost",
-  password: "taralite123",
-  database: "dudubase",
-  host: "localhost",
-  dialect: "postgres",
+  username: 'localhost',
+  password: 'taralite123',
+  database: 'dudubase',
+  host: 'localhost',
+  dialect: 'postgres',
+  dialectOptions: {
+    useUTC: false,
+  },
+  timezone: '+07:00',
 };
 
 const configurations = {};
