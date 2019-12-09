@@ -4,11 +4,11 @@ const constants = require(`${root}/const`);
 const { dog } = require('../services');
 
 module.exports.register = async (req, h, session) => {
-  req.payload.ownerId = session.user.id
-  await dog.register(req.payload);
+  req.payload.ownerId = session.user.id;
+  const dogId = await dog.register(req.payload);
   return {
     ...constants['200'],
-    dogs: await dog.getList(req.payload.ownerId),
+    dog: await dog.find(dogId),
   };
 };
 

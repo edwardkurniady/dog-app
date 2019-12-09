@@ -19,8 +19,6 @@ module.exports.upload = async (stream, id, type) => {
       contentType: 'image/jpeg',
     },
   }));
-
-  return `${storageURL}/${process.env.BUCKET_NAME}/${filename}`;
 };
 
 module.exports.delete = async (id, type) => {

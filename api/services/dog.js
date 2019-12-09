@@ -17,6 +17,7 @@ module.exports.register = async (data) => {
   await dog.update({
     photo: `${storageURL}/${process.env.BUCKET_NAME}/dog/${dog.id}/profile`,
   });
+  return dog.id;
 };
 
 module.exports.getList = async (ownerId, options) => {
