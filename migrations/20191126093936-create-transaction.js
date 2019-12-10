@@ -29,10 +29,19 @@ module.exports = {
       status: {
         type: Sequelize.STRING
       },
-      distance: {
+      paymentMethod: {
+        type: Sequelize.STRING
+      },
+      totalPrice: {
         type: Sequelize.INTEGER
       },
-      duration: {
+      totalPayment: {
+        type: Sequelize.INTEGER
+      },
+      extraPrice: {
+        type: Sequelize.INTEGER
+      },
+      basePrice: {
         type: Sequelize.INTEGER
       },
       createdAt: {

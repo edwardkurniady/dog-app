@@ -4,8 +4,11 @@ module.exports = (sequelize, DataTypes) => {
     userId: DataTypes.INTEGER,
     walkerId: DataTypes.INTEGER,
     status: DataTypes.STRING,
-    distance: DataTypes.INTEGER,
-    duration: DataTypes.INTEGER
+    paymentMethod: DataTypes.STRING,
+    totalPrice: DataTypes.INTEGER,
+    totalPayment: DataTypes.INTEGER,
+    extraPrice: DataTypes.INTEGER,
+    basePrice: DataTypes.INTEGER
   }, {});
   Transaction.associate = function(models) {
     // associations can be defined here

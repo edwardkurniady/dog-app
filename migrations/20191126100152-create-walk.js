@@ -17,23 +17,26 @@ module.exports = {
         onUpdate: 'cascade',
         onDelete: 'cascade',
       },
+      distance: {
+        type: Sequelize.INTEGER
+      },
+      duration: {
+        type: Sequelize.INTEGER
+      },
       beforePhoto: {
-        type: Sequelize.BLOB
+        type: Sequelize.STRING
       },
       afterPhoto: {
-        type: Sequelize.BLOB
+        type: Sequelize.STRING
       },
       poopPhoto: {
-        type: Sequelize.BLOB
-      },
-      breaksQuantity: {
-        type: Sequelize.INTEGER
-      },
-      breaksDurationTotal: {
-        type: Sequelize.INTEGER
-      },
-      location: {
         type: Sequelize.STRING
+      },
+      breaks: {
+        type: Sequelize.INTEGER
+      },
+      breaksDuration: {
+        type: Sequelize.INTEGER
       },
       createdAt: {
         allowNull: false,
