@@ -22,6 +22,10 @@ function createCipher (type) {
   return crypto[`create${type}iv`]('aes-256-cbc', key, iv);
 };
 
+module.exports.password = (data) => {
+  return crypto.createHash('sha256').update(data).digest('base64');
+}
+
 module.exports.encrypt = (data) => {
   if (!data) return data;
   const cipher = createCipher('Cipher');
