@@ -8,7 +8,9 @@ module.exports = (sequelize, DataTypes) => {
     afterPhoto: DataTypes.STRING,
     poopPhoto: DataTypes.STRING,
     breaks: DataTypes.INTEGER,
-    breaksDuration: DataTypes.INTEGER
+    breaksDuration: DataTypes.INTEGER,
+    startTime: DataTypes.DATE,
+    endTime: DataTypes.DATE,
   }, {});
   Walk.associate = function(models) {
     // associations can be defined here

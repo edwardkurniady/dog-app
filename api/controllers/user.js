@@ -18,7 +18,7 @@ const getDetails = async (userId, profile, searcher) => {
   return {
     profile: profile ? profile : await user.get(userId),
     walkerInfo: await walker.get(userId),
-    dogs: await dog.getList(userId),
+    dogs: await dog.getList({ ownerId: userId }),
     posts: await post.get(userId, searcher),
     comments: await comment.get(userId, searcher),
   };

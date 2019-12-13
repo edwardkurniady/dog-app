@@ -5,6 +5,7 @@ module.exports = (sequelize, DataTypes) => {
     walkerId: DataTypes.INTEGER,
     status: DataTypes.STRING,
     paymentMethod: DataTypes.STRING,
+    walkDate: DataTypes.DATE,
     totalPrice: DataTypes.INTEGER,
     totalPayment: DataTypes.INTEGER,
     extraPrice: DataTypes.INTEGER,

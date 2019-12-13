@@ -35,8 +35,10 @@ module.exports.update = async (data) => {
     data.photo = null;
     await photo.delete(data.id, 'user/profile');
   }
-  if (data.photo)
-    data.photo = await photo.upload(data.photo, data.id, 'user/profile');
+  if (data.photo) {
+    await photo.upload(data.photo, data.id, 'user/profile');
+    data.photo = `${storageURL}/${process.env.BUCKET_NAME}/user/${data.id}/profile`;
+  }
 
   delete data.deletePhoto;
   await Model.User.update(data, {

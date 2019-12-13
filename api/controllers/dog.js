@@ -13,7 +13,7 @@ module.exports.register = async (req, h, session) => {
 
 module.exports.get = async (req, h, session) => {
   const user = req.params.user || session.user.id;
-  return dog.getList(user, req.query);
+  return dog.getList({ ownerId: user }, req.query);
 };
 
 module.exports.update = async (req, h) => {

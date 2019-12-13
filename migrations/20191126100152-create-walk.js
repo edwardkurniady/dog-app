@@ -38,6 +38,12 @@ module.exports = {
       breaksDuration: {
         type: Sequelize.INTEGER
       },
+      startTime: {
+        type: Sequelize.DATE
+      },
+      endTime: {
+        type: Sequelize.DATE
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

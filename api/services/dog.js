@@ -22,11 +22,11 @@ module.exports.register = async (data) => {
   return dogId;
 };
 
-module.exports.getList = async (ownerId, options) => {
+module.exports.getList = async (where = {}, options) => {
   return Model.Dog.findAll({
+    where,
     ...options,
     raw: true,
-    where: { ownerId },
     include: [
       { 
         model: Model.Breed,

@@ -68,6 +68,7 @@ module.exports = [
           nik: Joi.string().regex(/[0-9]{16}/),
           photo: Joi.object().type(Readable),
           deletePhoto: Joi.boolean(),
+          session: Joi.string().required(),
         },
       },
     },

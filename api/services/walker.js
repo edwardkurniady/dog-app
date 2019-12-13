@@ -30,3 +30,10 @@ module.exports.rate = async (data) => {
     where: { id: data.id },
   });
 }
+
+module.exports.findAll = async (where) => {
+  return Model.Walker.findAll({
+    where,
+    raw: true,
+  });
+};

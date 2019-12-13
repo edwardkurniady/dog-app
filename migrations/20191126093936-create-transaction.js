@@ -29,6 +29,9 @@ module.exports = {
       status: {
         type: Sequelize.STRING
       },
+      walkDate: {
+        type: Sequelize.DATE
+      },
       paymentMethod: {
         type: Sequelize.STRING
       },
