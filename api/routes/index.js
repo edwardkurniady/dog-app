@@ -4,7 +4,6 @@ const root = path.resolve('.');
 const Bounce = require('bounce');
 const constants = require(`${root}/const`);
 const { auth } = require(`${root}/utils`);
-const Joi = require('joi').extend(require('joi-date-extensions'));
 
 const basename = path.basename(module.filename);
 
@@ -34,7 +33,8 @@ fs.readdirSync(__dirname)
           (noAuth[name] || []).forEach(na => {
             if (route.path.indexOf(na) > -1) needAuth = false;
           });
-          const session = auth.verify(req.payload.session);
+
+          const session = auth.verify(req.headers.session);
           if (needAuth && session.error) return {
             ...constants['401'],
             message: session.error,
@@ -42,8 +42,6 @@ fs.readdirSync(__dirname)
 
           const result = await fn(req, h, session);
           const resp = Array.isArray(result) ? { result } : result;
-          
-          if (needAuth && result.statusCode !== 403) resp.session = auth.refresh(session);
           
           return resp;
         } catch(e) {

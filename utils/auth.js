@@ -7,7 +7,7 @@ module.exports.refresh = (session) => {
     'nbf',
     'jti',
   ].forEach(key => delete session[key]);
-  return jwt.sign(session, process.env.JWT_KEY, { expiresIn: process.env.JWT_EXPIRATION });
+  return jwt.sign(session, process.env.JWT_KEY);
 };
 
 module.exports.verify = (session) => {
