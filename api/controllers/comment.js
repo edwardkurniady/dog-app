@@ -42,7 +42,7 @@ module.exports.upload = async (req, h, session) => {
   
   return {
     ...constants['200'],
-    body: await comment.getList(req.payload.postId),
+    body: await comment.getList(req.payload.postId, session.user.id),
   };
 };
 
