@@ -38,7 +38,10 @@ module.exports.update = async (req, h, session) => {
 };
 
 module.exports.get = async (req, h, session) => {
-  return walker.get(req.params.walker || session.user.id);
+  return {
+    ...constants['200'],
+    walkerInfo: await walker.get(req.params.walker || session.user.id),
+  };
 };
 
 module.exports.rate = async (req, h) => {
