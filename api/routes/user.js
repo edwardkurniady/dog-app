@@ -56,6 +56,10 @@ module.exports = [
         allow: 'multipart/form-data',
       },
       validate: {
+        failAction: async (req, h, error) => {
+          console.log(req.paylaod);
+          console.log(error);
+        },
         payload: {
           phoneNumber: Joi.string(),
           password: Joi.string(),
