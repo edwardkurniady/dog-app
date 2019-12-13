@@ -57,8 +57,9 @@ module.exports = [
       },
       validate: {
         failAction: async (req, h, error) => {
-          console.log(req.paylaod);
+          // console.log(req.paylaod);
           console.log(error);
+          throw error;
         },
         payload: {
           phoneNumber: Joi.string(),
