@@ -1,41 +1,106 @@
 const path = require('path');
 const root = path.resolve('.');
+const Promise = require('bluebird');
 const constants = require(`${root}/const`);
-const { dog } = require('../services');
+const {
+  filter,
+} = require(`${root}/utils`);
+const {
+  database,
+  photo,
+} = require('../services');
 
-module.exports.register = async (req, h, session) => {
-  req.payload.ownerId = session.user.id;
+async function getBreedName (dogs = []) {
+  dogs = Array.isArray(dogs) ? dogs : [ dogs ];
+  return Promise.all(dogs.map(async (dog) => {
+    const breed = await database.findOne('Breed', { id: dog.breedId });
+    dog.breedName = breed.name;
+    delete dog.createdAt;
+    delete dog.updatedAt;
+    return dog;
+  }));
+}
+
+module.exports.register = async (req, _) => {
+  req.payload.ownerId = req.requester;
+  filter(req.payload);
+  const p = req.payload.photo;
+  delete req.payload.photo;
+
+  const dog = await database.create('Dog', req.payload);
+  const dogId = dog.dataValues.id;
+
+  await dog.update({
+    photo: await photo.upload(p, dogId, 'dog/profile'),
+  });
+
+  return this.get({
+    params: { user: req.requester },
+  });
+};
+
+module.exports.get = async (req, _) => {
+  const dogs = await database.findAll('Dog', {
+    ownerId: req.params.user || req.requester,
+  }, req.query);
+
   return {
     ...constants['200'],
-    dog: await dog.find(await dog.register(req.payload)),
+    body: await getBreedName(dogs),
   };
 };
 
-module.exports.get = async (req, h, session) => {
-  const user = req.params.user || session.user.id;
-  return dog.getList({ ownerId: user }, req.query);
+module.exports.update = async (req, _) => {
+  const ownerId = req.requester;
+  const where = { id: req.payload.id };
+  const doggo = await database.findOne('Dog', where);
+  if (doggo.ownerId !== ownerId) return {
+    ...constants['403'],
+    message: 'Permission denied!',
+  };
+  req.payload.photo = await photo.upload(
+    req.payload.photo,
+    req.payload.id,
+    'dog/profile',
+  );
+  filter(req.payload);
+  await database.update('Dog', req.payload, where);
+
+  return this.get({
+    params: { user: req.requester },
+  });
 };
 
-module.exports.update = async (req, h) => {
-  await dog.update(req.payload);
-  
+module.exports.find = async (req, _) => {
+  const dog = await database.findOne('Dog', {
+    id: req.params.dog,
+  });
   return {
     ...constants['200'],
-    dog: await dog.find(req.payload.id),
+    body: await getBreedName(dog),
   };
 };
 
-module.exports.find = async (req, h) => {
-  return dog.find(req.params.dog);
-};
-
-module.exports.delete = async (req, h, session) => {
-  const doggo = await dog.find(req.payload.id);
-  if (doggo.ownerId !== session.user.id) return {
+module.exports.delete = async (req, _) => {
+  const where = { id: req.payload.id };
+  const doggo = await database.findOne('Dog', where);
+  if (doggo.ownerId !== req.requester) return {
     ...constants['403'],
     message: 'Permission denied!',
   };
 
-  await dog.delete(req.payload.id);
-  return constants['200'];
+  await photo.delete(req.payload.id, 'dog/profile');
+  await database.delete('Dog', where);
+  return this.get({
+    params: { user: req.requester },
+  });
+};
+
+module.exports.deletePhoto = async (req, _) => {
+  const where = { id: req.payload.id };
+  await photo.delete(req.payload.id, 'dog/profile');
+  await database.update('Dog', { photo: null }, where);
+  return this.get({
+    params: { user: req.requester },
+  });
 };

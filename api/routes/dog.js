@@ -24,13 +24,13 @@ module.exports = [
       },
       validate: {
         payload: {
-          name: Joi.string().required(),
-          breedId: Joi.number().required(),
           age: Joi.number().required(),
+          breedId: Joi.number().required(),
           gender: Joi.string().required(),
+          name: Joi.string().required(),
+          photo: Joi.object().allow(null).type(Readable),
+          specialNeeds: Joi.string().allow(''),
           weight: Joi.number().required(),
-          photo: Joi.object().type(Readable),
-          specialNeeds: Joi.string(),
         },
       },
     },
@@ -48,15 +48,14 @@ module.exports = [
       },
       validate: {
         payload: {
-          id: Joi.number().required(),
-          name: Joi.string(),
-          deletePhoto: Joi.boolean(),
-          breedId: Joi.number(),
           age: Joi.number(),
-          gender: Joi.string(),
+          breedId: Joi.number(),
+          gender: Joi.string().allow(''),
+          id: Joi.number().required(),
+          name: Joi.string().allow(''),
+          photo: Joi.object().allow(null).type(Readable),
+          specialNeeds: Joi.string().allow(''),
           weight: Joi.number(),
-          photo: Joi.object().type(Readable),
-          specialNeeds: Joi.string(),
         },
       },
     },
@@ -66,6 +65,18 @@ module.exports = [
     path: `/${base}/delete`,
     config: {
       handler: controller.delete,
+      validate: {
+        payload: {
+          id: Joi.number().required(),
+        },
+      },
+    },
+  },
+  {
+    method: 'POST',
+    path: `/${base}/deletePhoto`,
+    config: {
+      handler: controller.deletePhoto,
       validate: {
         payload: {
           id: Joi.number().required(),

@@ -10,8 +10,8 @@ module.exports = [
       handler : controller.upload,
       validate: {
         payload: {
-          title: Joi.string().required(),
           content: Joi.string().required(),
+          title: Joi.string().required(),
         },
       },
     },
@@ -23,9 +23,9 @@ module.exports = [
       handler : controller.update,
       validate: {
         payload: {
-          id: Joi.number().required(),
-          title: Joi.string(),
           content: Joi.string(),
+          title: Joi.string(),
+          id: Joi.number().required(),
         },
       },
     },

@@ -10,7 +10,7 @@ module.exports = [
       handler: (req, h) => {
         return {
           ...constants['404'],
-          message: 'Page not found!'
+          message: 'Page not found!',
         };
       },
     },

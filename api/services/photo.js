@@ -1,6 +1,6 @@
 const path = require('path');
-const { Storage } = require('@google-cloud/storage');
 const { storageURL } = require(path.resolve('.', 'const'));
+const { Storage } = require('@google-cloud/storage');
 
 module.exports.upload = async (stream, id, type) => {
   if (!stream) return null;
@@ -19,6 +19,8 @@ module.exports.upload = async (stream, id, type) => {
       contentType: 'image/jpeg',
     },
   }));
+
+  return `${storageURL}/${process.env.BUCKET_NAME}/${filename}`;
 };
 
 module.exports.delete = async (id, type) => {

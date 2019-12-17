@@ -6,7 +6,10 @@ const {
 } = require(`${root}/api/services`);
 
 module.exports.get = async (req, h, session) => {
-  return post.get(req.params.user || session.user.id);
+  return {
+    ...constants['200'],
+    posts: await post.get(req.params.user || session.user.id),
+  };
 };
 
 module.exports.find = async (req, h, session) => {
@@ -15,7 +18,10 @@ module.exports.find = async (req, h, session) => {
     ...constants['404'],
     message: 'Post not found!',
   };
-  return p;
+  return {
+    ...constants['200'],
+    post: p,
+  };
 };
 
 module.exports.upload = async (req, h, session) => {

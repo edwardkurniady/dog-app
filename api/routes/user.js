@@ -25,21 +25,21 @@ module.exports = [
       payload: {
         parse: true,
         output: 'stream',
-        maxBytes: 5 * 1000 * 1000,
+        maxBytes: 3 * 1000 * 1000,
         allow: 'multipart/form-data',
       },
       validate: {
         payload: {
-          phoneNumber: Joi.string().required(),
-          password: Joi.string().required(),
-          name: Joi.string().required(),
-          gender: Joi.string().required(),
-          address: Joi.string().required(),
-          email: Joi.string().email().required(),
-          placeOfBirth: Joi.string().required(),
+          address: Joi.string().required(),
           dateOfBirth: Joi.date().format('DD-MM-YYYY').required(),
-          nik: Joi.string().regex(/[0-9]{16}/),
-          photo: Joi.object().type(Readable),
+          email: Joi.string().email().required(),
+          gender: Joi.string().required(),
+          name: Joi.string().required(),
+          nik: Joi.string().regex(/[0-9]{16}/).allow(''),
+          password: Joi.string().required(),
+          phoneNumber: Joi.string().required(),
+          photo: Joi.object().type(Readable).allow(null).required(),
+          placeOfBirth: Joi.string().required(),
         },
       },
     },
@@ -52,27 +52,22 @@ module.exports = [
       payload: {
         parse: true,
         output: 'stream',
-        maxBytes: 5 * 1000 * 1000,
+        maxBytes: 3 * 1000 * 1000,
         allow: 'multipart/form-data',
       },
       validate: {
-        failAction: async (req, h, error) => {
-          // console.log(req.paylaod);
-          console.log(error);
-          throw error;
-        },
         payload: {
-          phoneNumber: Joi.string(),
-          password: Joi.string(),
-          name: Joi.string(),
-          gender: Joi.string(),
-          address: Joi.string(),
-          email: Joi.string().email(),
-          placeOfBirth: Joi.string(),
-          dateOfBirth: Joi.date().format('DD-MM-YYYY'),
-          nik: Joi.string().regex(/[0-9]{16}/),
-          photo: Joi.object().type(Readable),
-          deletePhoto: Joi.boolean(),
+          address: Joi.string().allow(''),
+          dateOfBirth: Joi.date().format('DD-MM-YYYY').allow(''),
+          email: Joi.string().email().allow(''),
+          gender: Joi.string().allow(''),
+          name: Joi.string().allow(''),
+          nik: Joi.string().regex(/[0-9]{16}/).allow(''),
+          password: Joi.string().allow(''),
+          phoneNumber: Joi.string().allow(''),
+          photo: Joi.object().allow(null).type(Readable).required(),
+          placeOfBirth: Joi.string().allow(''),
+          type: Joi.string().allow(''),
         },
       },
     },
@@ -82,6 +77,13 @@ module.exports = [
     path: `/${base}/get/{user?}`,
     config: {
       handler: controller.get
+    },
+  },
+  {
+    method: 'GET',
+    path: `/${base}/deletePhoto`,
+    config: {
+      handler: controller.delete
     },
   },
 ];

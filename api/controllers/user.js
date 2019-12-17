@@ -3,97 +3,136 @@ const root = path.resolve('.');
 const jwt = require('jsonwebtoken');
 const constants = require(`${root}/const`);
 const {
-  dog,
-  user,
-  post,
-  comment,
-  walker,
+  database,
+  photo,
 } = require('../services');
 const {
-  dupCheck,
+  filter,
   processCred,
 } = require(`${root}/utils`);
 
-const getDetails = async (userId, profile, searcher) => {
+const getDetails = async (id) => {
+  const options = {
+    attributes: {
+      exclude:[
+        'createdAt',
+        'updatedAt',
+      ],
+    },
+  };
   return {
-    profile: profile ? profile : await user.get(userId),
-    walkerInfo: await walker.get(userId),
-    dogs: await dog.getList({ ownerId: userId }),
-    posts: await post.get(userId, searcher),
-    comments: await comment.get(userId, searcher),
+    ...constants['200'],
+    body: {
+      ...(await database.findOne('User', { id }, options)),
+      ...(await database.findOne('Walker', { id }, options)),
+    },
   };
 };
 
-module.exports.login = async (req, h) => {
+module.exports.login = async (req, _) => {
   const payload = processCred(req.payload);
   const errResp = {
     message: null,
     ...constants['401'],
   };
+  const options = {
+    attributes: {
+      exclude:[
+        'createdAt',
+        'updatedAt',
+      ],
+    },
+  };
 
-  const usr = await user.login(payload);
-  if (!usr) errResp.message = 'Phone number not registered!';
-  if (usr && usr.password != payload.password) errResp.message = 'Wrong password!';
+  const usr = await database.findOne('User', {
+    phoneNumber: payload.phoneNumber,
+  }, options);
+
+  errResp.message = !usr ?
+    'Phone number not registered!' : 
+    usr.password != payload.password ?
+      'Wrong password!' :
+      null;
+
   if (errResp.message) return errResp;
 
-  delete usr.password;
-  [
-    'password',
-    'createdAt',
-    'updatedAt',
-  ].forEach(key => delete usr[key]);
+  const walkerInfo = await database.findOne('Walker', {
+    id: usr.id,
+  }, options);
 
   return {
     ...constants['200'],
-    body: await getDetails(usr.id, usr),
     session: jwt.sign({
-      user: { id: usr.id },
-    }, process.env.JWT_KEY, {
-      expiresIn: process.env.JWT_EXPIRATION,
-    }),
+      userId: usr.id,
+    }, process.env.JWT_KEY),
+    body: {
+      ...usr,
+      ...walkerInfo,
+    },
   };
 };
 
-module.exports.register = async (req, h) => {
+module.exports.register = async (req, _) => {
   const payload = processCred(req.payload);
   const {
     key,
     duplicate,
-  } = await dupCheck('User', payload);
+  } = await database.dupCheck('User', payload);
 
   if (duplicate) return {
     ...constants['409'],
     message: `duplicate ${key}!`,
   };
-  await user.register(payload);
+
+  filter(payload);
+  payload.photo = await photo.upload(
+    payload.photo,
+    payload.phoneNumber,
+    'user/profile'
+  );
+
+  payload.isWalker = false;
+  payload.type = 'user';
+
+  await database.create('User', payload);
   
   return constants['200'];
 };
 
-module.exports.update = async (req, h, session) => {
+module.exports.update = async (req, _) => {
   const payload = processCred(req.payload);
-  payload.id = session.user.id;
+  payload.id = req.requester;
   const {
     key,
     duplicate,
-  } = await dupCheck('User', payload);
-  const isUserData = duplicate ? duplicate.id === payload.id : false;
+  } = await database.dupCheck('User', payload);
+  const isUserData = duplicate ? (duplicate.id === payload.id) : false;
 
   if (duplicate && !isUserData) return {
     ...constants['409'],
     message: `duplicate ${key}!`,
   };
-  await user.update(payload);
+
+  filter(payload);
+  payload.photo = await photo.upload(
+    payload.photo, 
+    duplicate.phoneNumber, 
+    'user/profile',
+  ); 
+
+  await database.update('User', payload, { id: duplicate.id });
   
-  return {
-    ...constants['200'],
-    body: await getDetails(payload.id),
-  };
+  return getDetails(duplicate.id);
 };
 
-module.exports.get = async (req, h, session) => {
-  const userId = req.params.user || session.user.id;
-  
-  const usr = await user.get(userId);
-  return getDetails(userId, usr, session.user.id);
+module.exports.get = async (req, _) => {
+  return getDetails(req.params.user || req.requester);
+};
+
+module.exports.delete = async (req, _) => {
+  const where = { id: req.requester };
+  const u = await database.findOne('User', where);
+  await photo.delete(u.phoneNumber, 'user/profile');
+  await database.update('User', { photo: null }, where);
+  return getDetails(u.id);
 };

@@ -3,18 +3,19 @@ const path = require('path');
 const root = path.resolve('.');
 const Bounce = require('bounce');
 const constants = require(`${root}/const`);
-const { auth } = require(`${root}/utils`);
+const {
+  auth,
+  failAction,
+} = require(`${root}/utils`);
 
 const basename = path.basename(module.filename);
 
 const routes = [];
 const noAuth = {
+  breed: [ 'breed' ],
   user: [
     'login',
     'register',
-  ],
-  breed: [
-    'breed',
   ],
 };
 
@@ -27,6 +28,11 @@ fs.readdirSync(__dirname)
     const name = file.slice(0, -3);
     routes.push(...require(`./${name}`).map(route => {
       const fn = route.config.handler;
+      route.config.validate = {
+        failAction,
+        ...route.config.validate,
+      };
+      
       route.config.handler = async (req, h) => {
         try {
           let needAuth = true;
@@ -40,10 +46,8 @@ fs.readdirSync(__dirname)
             message: session.error,
           };
 
-          const result = await fn(req, h, session);
-          const resp = Array.isArray(result) ? { result } : result;
-          
-          return resp;
+          req.requester = session.userId;
+          return fn(req, h);
         } catch(e) {
           console.error(e);
           Bounce.rethrow(e, 'boom');

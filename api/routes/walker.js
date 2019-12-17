@@ -1,5 +1,4 @@
 const base = 'walker';
-const { Readable } = require('stream');
 const Joi = require('joi').extend(require('joi-date-extensions'));
 const controller = require('../controllers')[base];
 
@@ -12,10 +11,10 @@ module.exports = [
       validate: {
         payload: {
           description: Joi.string().required(),
-          travelDistance: Joi.number().required(),
-          walkDuration: Joi.number().required(),
           maxDogSize: Joi.number().required(),
           pricing: Joi.number().required(),
+          travelDistance: Joi.number().required(),
+          walkDuration: Joi.number().required(),
         },
       },
     },
@@ -27,13 +26,13 @@ module.exports = [
       handler: controller.update,
       validate: {
         payload: {
+          description: Joi.string().allow(''),
           isVerified: Joi.boolean(),
           isRecommended: Joi.boolean(),
-          description: Joi.string(),
-          travelDistance: Joi.number(),
-          walkDuration: Joi.number(),
           maxDogSize: Joi.number(),
           pricing: Joi.number(),
+          travelDistance: Joi.number(),
+          walkDuration: Joi.number(),
         },
       },
     },

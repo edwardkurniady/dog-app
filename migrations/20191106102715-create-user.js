@@ -29,6 +29,9 @@ module.exports = {
       address: {
         type: Sequelize.STRING
       },
+      type: {
+        type: Sequelize.STRING
+      },
       isWalker: {
         type: Sequelize.BOOLEAN
       },

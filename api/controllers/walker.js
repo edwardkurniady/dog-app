@@ -1,59 +1,75 @@
 const path = require('path');
 const root = path.resolve('.');
 const constants = require(`${root}/const`);
-const {
-  user,
-  walker,
-} = require('../services');
+const { filter } = require(`${root}/utils`);
+const { database } = require('../services');
 
-module.exports.register = async (req, h, session) => {
-  req.payload.id = session.user.id;
+const getDetails = async (id) => {
+  const options = {
+    attributes: {
+      exclude:[
+        'createdAt',
+        'updatedAt',
+      ],
+    },
+  };
+  return {
+    ...constants['200'],
+    body: await database.findOne('Walker', { id }, options),
+  };
+};
+
+module.exports.register = async (req, _) => {
+  req.payload.id = req.requester;
   req.payload.isRecommended = false;
   req.payload.isVerified = false;
   req.payload.rating = 0;
   req.payload.raters = 0;
+  filter(req.payload);
 
-  await walker.register(req.payload);
-  await user.update({
-    id: req.payload.id,
-    isWalker: true,
-  });
+  await database.create('Walker', req.payload);
+  await database.update(
+    'User',
+    { isWalker: true },
+    { id: req.payload.id }
+  );
 
-  return {
-    ...constants['200'],
-    profile: await user.get(req.payload.id),
-    walkerInfo: await walker.get(req.payload.id),
-  };
+  return getDetails(req.payload.id);
 };
 
-module.exports.update = async (req, h, session) => {
-  req.payload.id = session.user.id;
-  await walker.update(req.payload);
+module.exports.update = async (req, _) => {
+  req.payload.id = req.requester;
+  filter(req.payload);
+  await database.update('Walker', req.payload, { id: req.payload.id });
   
-  return {
-    ...constants['200'],
-    profile: await user.get(req.payload.id),
-    walkerInfo: await walker.get(req.payload.id),
-  };
+  return getDetails(req.payload.id);
 };
 
-module.exports.get = async (req, h, session) => {
-  return {
-    ...constants['200'],
-    walkerInfo: await walker.get(req.params.walker || session.user.id),
-  };
+module.exports.get = async (req, _) => {
+  return getDetails(req.params.walker || req.requester);
 };
 
-module.exports.rate = async (req, h) => {
-  const w = await walker.get(req.payload.id);
+module.exports.rate = async (req, _) => {
+  const where = { id: req.payload.id };
+  const w = await database.findOne('Walker', where, {
+    attributes: {
+      exclude:[
+        'createdAt',
+        'updatedAt',
+      ],
+    },
+  });
   if (!w) return {
     ...constants['404'],
     message: 'walker not found!',
   };
-  await walker.rate({
-    id: req.payload.id,
-    rating: w.rating + req.payload.rate,
-    raters: w.raters + 1,
-  });
-  return constants['200'];
+
+  w.raters = w.raters + 1;
+  w.rating = w.rating + req.payload.rate;
+
+  await database.update('Walker', w, where);
+  return {
+    body: w,
+    ...constants['200'],
+  };
 };
