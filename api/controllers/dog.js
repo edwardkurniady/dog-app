@@ -11,14 +11,18 @@ const {
 } = require('../services');
 
 async function getBreedName (dogs = []) {
-  dogs = Array.isArray(dogs) ? dogs : [ dogs ];
-  return Promise.all(dogs.map(async (dog) => {
+  const isArray = Array.isArray(dogs);
+  dogs = isArray ? dogs : [ dogs ];
+
+  const result = await Promise.all(dogs.map(async (dog) => {
     const breed = await database.findOne('Breed', { id: dog.breedId });
     dog.breedName = breed.name;
     delete dog.createdAt;
     delete dog.updatedAt;
     return dog;
   }));
+
+  return isArray ? result : result[0];
 }
 
 module.exports.register = async (req, _) => {
