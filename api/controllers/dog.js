@@ -40,9 +40,10 @@ module.exports.register = async (req, _) => {
     photo: await photo.upload(p, dogId, 'dog/profile'),
   });
 
-  return this.get({
-    params: { user: req.requester },
-  });
+  return {
+    ...constants['200'],
+    body: null,
+  };
 };
 
 module.exports.get = async (req, _) => {
