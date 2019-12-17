@@ -19,6 +19,7 @@ async function getBreedName (dogs = []) {
     dog.breedName = breed.name;
     delete dog.createdAt;
     delete dog.updatedAt;
+    delete dog.ownerId;
     return dog;
   }));
 
@@ -79,6 +80,7 @@ module.exports.find = async (req, _) => {
   const dog = await database.findOne('Dog', {
     id: req.params.dog,
   });
+  
   return {
     ...constants['200'],
     body: await getBreedName(dog),
