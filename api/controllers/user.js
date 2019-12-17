@@ -96,7 +96,10 @@ module.exports.register = async (req, _) => {
 
   await database.create('User', payload);
   
-  return constants['200'];
+  return {
+    ...constants['200'],
+    body: null,
+  };
 };
 
 module.exports.update = async (req, _) => {
