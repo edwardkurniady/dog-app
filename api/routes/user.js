@@ -22,12 +22,6 @@ module.exports = [
     path: `/${base}/register`,
     config: {
       handler: controller.register,
-      payload: {
-        parse: true,
-        output: 'stream',
-        maxBytes: 3 * 1000 * 1000,
-        allow: 'multipart/form-data',
-      },
       validate: {
         payload: {
           address: Joi.string().required(),
@@ -38,7 +32,6 @@ module.exports = [
           nik: Joi.string().regex(/[0-9]{16}/).allow(''),
           password: Joi.string().required(),
           phoneNumber: Joi.string().required(),
-          photo: Joi.object().type(Readable).allow(null).required(),
           placeOfBirth: Joi.string().required(),
         },
       },
