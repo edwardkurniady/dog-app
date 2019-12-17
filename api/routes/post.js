@@ -23,8 +23,8 @@ module.exports = [
       handler : controller.update,
       validate: {
         payload: {
-          content: Joi.string(),
-          title: Joi.string(),
+          content: Joi.string().allow(''),
+          title: Joi.string().allow(''),
           id: Joi.number().required(),
         },
       },

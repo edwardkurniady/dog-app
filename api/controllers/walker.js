@@ -15,7 +15,10 @@ const getDetails = async (id) => {
   };
   return {
     ...constants['200'],
-    body: await database.findOne('Walker', { id }, options),
+    body: {
+      ...(await database.findOne('User', { id }, options)),
+      ...(await database.findOne('Walker', { id }, options)),
+    },
   };
 };
 
@@ -69,7 +72,7 @@ module.exports.rate = async (req, _) => {
 
   await database.update('Walker', w, where);
   return {
-    body: w,
     ...constants['200'],
+    body: await getDetails(req.payload.id),
   };
 };

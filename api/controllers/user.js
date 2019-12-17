@@ -12,20 +12,16 @@ const {
 } = require(`${root}/utils`);
 
 const getDetails = async (id) => {
-  const options = {
-    attributes: {
-      exclude:[
-        'createdAt',
-        'updatedAt',
-      ],
-    },
-  };
   return {
     ...constants['200'],
-    body: {
-      ...(await database.findOne('User', { id }, options)),
-      ...(await database.findOne('Walker', { id }, options)),
-    },
+    body: await database.findOne('User', { id }, {
+      attributes: {
+        exclude:[
+          'createdAt',
+          'updatedAt',
+        ],
+      },
+    }),
   };
 };
 
@@ -56,19 +52,12 @@ module.exports.login = async (req, _) => {
 
   if (errResp.message) return errResp;
 
-  const walkerInfo = await database.findOne('Walker', {
-    id: usr.id,
-  }, options);
-
   return {
     ...constants['200'],
     session: jwt.sign({
       userId: usr.id,
     }, process.env.JWT_KEY),
-    body: {
-      ...usr,
-      ...walkerInfo,
-    },
+    body: usr,
   };
 };
 
