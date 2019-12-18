@@ -94,12 +94,12 @@ module.exports.register = async (req, _) => {
 module.exports.update = async (req, _) => {
   const payload = processCred(req.payload);
   payload.id = req.requester;
+  const user = await database.findOne('User', { id: payload.id });
   const {
     key,
     duplicate,
   } = await database.dupCheck('User', payload);
   const isUserData = duplicate ? (duplicate.id === payload.id) : false;
-  console.log(duplicate)
 
   if (duplicate && !isUserData) return {
     ...constants['409'],
@@ -109,13 +109,13 @@ module.exports.update = async (req, _) => {
   filter(payload);
   payload.photo = await photo.upload(
     payload.photo, 
-    duplicate.phoneNumber, 
+    user.phoneNumber, 
     'user/profile',
   ); 
 
-  await database.update('User', payload, { id: duplicate.id });
+  await database.update('User', payload, { id: payload.id });
   
-  return getDetails(duplicate.id);
+  return getDetails(payload.id);
 };
 
 module.exports.get = async (req, _) => {
