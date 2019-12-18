@@ -99,6 +99,7 @@ module.exports.update = async (req, _) => {
     duplicate,
   } = await database.dupCheck('User', payload);
   const isUserData = duplicate ? (duplicate.id === payload.id) : false;
+  console.log(duplicate)
 
   if (duplicate && !isUserData) return {
     ...constants['409'],
