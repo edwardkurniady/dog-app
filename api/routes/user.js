@@ -58,7 +58,7 @@ module.exports = [
           nik: Joi.string().regex(/[0-9]{16}/).allow(''),
           password: Joi.string().allow(''),
           phoneNumber: Joi.string().allow(''),
-          photo: Joi.object().allow(null).type(Readable).required(),
+          photo: Joi.object().allow(null).type(Readable),
           placeOfBirth: Joi.string().allow(''),
           type: Joi.string().allow(''),
         },
