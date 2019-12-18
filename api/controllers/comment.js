@@ -1,107 +1,151 @@
 const path = require('path');
 const root = path.resolve('.');
 const constants = require(`${root}/const`);
-const {
-  post,
-  comment,
-} = require(`${root}/api/services`);
+const { database } = require(`${root}/api/services`);
 
-module.exports.get = async (req, h, session) => {
-  return comment.get(req.params.user || session.user.id);
+async function getLikeStatus (comments, userId) {
+  const isArray = Array.isArray(comments);
+  comments = isArray ? comments : [ comments ];
+
+  const result = await Promise.all(comments.map(async (comment) => {
+    const lbu = await database.findOne('CommentLike', {
+      userId,
+      commentId: comment.id,
+    });
+    comment.likedByUser = lbu ? true : false;
+    return comment;
+  }));
+
+  return isArray ? result : result[0];
+}
+
+module.exports.get = async (req, _) => {
+  const searcher = req.requester;
+  const where = { userId: req.params.user || searcher };
+
+  const comments = await database.findAll('Comment', where);
+  return {
+    ...constants['200'],
+    body: await getLikeStatus(comments, searcher),
+  };
 };
 
-module.exports.getList = async (req, h, session) => {
-  const p = await post.find(req.params.post, session.user.id);
+module.exports.getList = async (req, _) => {
+  const p = await database.findOne('Post', {
+    id: req.params.post,
+  });
   if (!p) return {
     ...constants['404'],
     message: 'Post not found!',
   };
-  return comment.getList(req.params.post, session.user.id);
+
+  const comments = await database.findAll('Comment', {
+    postId: p.id,
+  });
+  return {
+    ...constants['200'],
+    body: await getLikeStatus(comments, req.requester),
+  };
 };
 
-module.exports.find = async (req, h, session) => {
-  const c = await comment.find(req.params.comment, session.user.id);
+module.exports.find = async (req, _) => {
+  const c = await database.findOne('Comment', {
+    id: req.params.comment,
+  });
   if (!c) return {
     ...constants['404'],
     message: 'Comment not found!',
   };
-  return c;
+  return {
+    ...constants['200'],
+    body: await getLikeStatus(c, req.requester),
+  };
 };
 
-module.exports.upload = async (req, h, session) => {
+module.exports.upload = async (req, _) => {
   req.payload.likes = 0;
-  req.payload.userId = session.user.id;
+  req.payload.userId = req.requester;
 
-  const p = await post.find(req.payload.postId, session.user.id);
+  const p = await database.findOne('Post', {
+    id: req.payload.postId,
+  });
   if (!p) return {
     ...constants['404'],
     message: 'Post not found!',
   };
 
-  await comment.upload(req.payload);
-  
-  return {
-    ...constants['200'],
-    body: await comment.getList(req.payload.postId, session.user.id),
-  };
+  await database.create('Comment', req.payload);
+
+  return this.getList({
+    params: { post: req.payload.postId },
+    requester: req.requester,
+  });
 };
 
-module.exports.update = async (req, h, session) => {
-  const c = await comment.find(req.payload.id, session.user.id);
+module.exports.update = async (req, _) => {
+  const where = { id: req.payload.id };
+  const c = await database.findOne('Comment', where);
 
   if (!c) return {
     ...constants['404'],
     message: 'Comment not found!',
   };
-
-  if (c.userId !== session.user.id) return {
+  if (c.userId !== req.requester) return {
     ...constants['403'],
     message: 'Permission denied!',
   };
 
-  await comment.update(req.payload);
+  await database.update('Comment', req.payload, where);
 
-  return {
-    ...constants['200'],
-    body: await comment.find(req.payload.id, session.user.id),
-  };
+  return this.find({
+    requester: req.requester,
+    params: { comment: c.id },
+  });
 };
 
-module.exports.delete = async (req, h, session) => {
-  const c = await comment.find(req.payload.id, session.user.id);
+module.exports.delete = async (req, _) => {
+  const where = { id: req.payload.id };
+  const c = await database.findOne('Comment', where);
 
   if (!c) return {
     ...constants['404'],
     message: 'Comment not found!',
   };
-
-  if (c.userId !== session.user.id) return {
+  if (c.userId !== req.requester) return {
     ...constants['403'],
     message: 'Permission denied!',
   };
 
-  await comment.delete(req.payload.id);
+  await database.delete('Comment', where);
 
-  return constants['200'];
+  return {
+    ...constants['200'],
+    body: null,
+  };
 };
 
-module.exports.like = async (req, h, session) => {
+module.exports.like = async (req, _) => {
   const data = {
-    userId: session.user.id,
+    userId: req.requester,
     commentId: req.payload.id,
   };
 
-  const c = await comment.find(data.commentId, data.userId);
-  if (!c) return {
+  const where = { id: data.commentId };
+  const comment = await database.findOne('Comment', where);
+  if (!comment) return {
     ...constants['404'],
     message: 'Comment not found!',
   };
 
-  if (!c.likedByUser) await comment.like(data, c.likes + 1);
-  else await comment.unlike(data, c.likes - 1, c.id);
-  
-  return {
-    ...constants['200'],
-    body: await comment.find(data.commentId, data.userId),
-  };
+  const c = await getLikeStatus(comment, data.userId);
+  const likes = c.likedByUser ? c.likes - 1 : c.likes + 1;
+  const method = c.likedByUser ? 'delete' : 'create';
+
+  await database[method]('CommentLike', data);
+  await database.update('Comment', { likes }, where);
+
+  return this.find({
+    requester: req.requester,
+    params: { comment: c.id },
+  });
 };
