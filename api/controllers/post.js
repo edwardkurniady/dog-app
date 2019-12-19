@@ -37,6 +37,18 @@ module.exports.get = async (req, _) => {
   };
 };
 
+module.exports.global = async (req, _) => {
+  const searcher = req.requester;
+  req.query.limit = req.query.limit || 10;
+
+  const posts = await database.findAll('Post', {}, req.query);
+
+  return {
+    ...constants['200'],
+    body: await getLikeStatus(posts, searcher),
+  };
+};
+
 module.exports.find = async (req, _) => {
   const p = await database.findOne('Post', {
     id: req.params.post,

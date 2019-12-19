@@ -15,8 +15,13 @@ module.exports.upload = async (stream, id, type) => {
   const file = bucket.file(filename);
 
   stream.pipe(file.createWriteStream({
+    gzip: true,
+    public: true,
     metadata: {
       contentType: 'image/jpeg',
+      metadata: {
+        custom: 'metadata',
+      },
     },
   }));
 

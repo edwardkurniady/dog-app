@@ -68,4 +68,11 @@ module.exports = [
       handler : controller.find,
     },
   },
+  {
+    method: 'GET',
+    path: `/${base}/global`,
+    config: {
+      handler : controller.global,
+    },
+  },
 ];
