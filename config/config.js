@@ -6,9 +6,6 @@ const defaultConfig = {
   database: 'dudubase',
   host: 'localhost',
   dialect: 'postgres',
-  dialectOptions: {
-    useUTC: false,
-  },
   timezone: '+07:00',
 };
 

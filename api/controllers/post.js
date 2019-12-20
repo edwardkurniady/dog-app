@@ -35,7 +35,7 @@ async function getUserData (posts) {
   const isArray = Array.isArray(posts);
   posts = isArray ? posts : [ posts ];
 
-  return Promise.all(posts.map (async (post) => {
+  const result = await Promise.all(posts.map (async (post) => {
     const user = await database.findOne('User', {
       id: post.userId,
     });
@@ -48,6 +48,8 @@ async function getUserData (posts) {
 
     return post;
   }));
+
+  return isArray ? result : result[0];
 }
 
 module.exports.get = async (req, _) => {

@@ -29,7 +29,7 @@ async function getUserData (comments) {
   const isArray = Array.isArray(comments);
   comments = isArray ? comments : [ comments ];
 
-  return Promise.all(comments.map (async (comment) => {
+  const result = await Promise.all(comments.map (async (comment) => {
     const user = await database.findOne('User', {
       id: comment.userId,
     });
@@ -42,6 +42,8 @@ async function getUserData (comments) {
 
     return comment;
   }));
+
+  return isArray ? result : result[0];
 }
 
 module.exports.get = async (req, _) => {
