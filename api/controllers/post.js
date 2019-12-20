@@ -7,8 +7,7 @@ const { database } = require(`${root}/api/services`);
 
 const sort = {
   order: [
-    ['id', 'DESC'],
-    ['name', 'ASC'],
+    ['createdAt', 'DESC'],
   ],
 };
 
