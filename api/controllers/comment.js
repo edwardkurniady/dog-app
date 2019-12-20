@@ -3,6 +3,13 @@ const root = path.resolve('.');
 const constants = require(`${root}/const`);
 const { database } = require(`${root}/api/services`);
 
+const sort = {
+  order: [
+    ['id', 'DESC'],
+    ['name', 'ASC'],
+  ],
+};
+
 async function getLikeStatus (comments, userId) {
   const isArray = Array.isArray(comments);
   comments = isArray ? comments : [ comments ];
@@ -19,14 +26,34 @@ async function getLikeStatus (comments, userId) {
   return isArray ? result : result[0];
 }
 
+async function getUserData (comments) {
+  const isArray = Array.isArray(comments);
+  comments = isArray ? comments : [ comments ];
+
+  return Promise.all(comments.map (async (comment) => {
+    const user = await database.findOne('User', {
+      id: comment.userId,
+    });
+
+    comment.name = user.name;
+    comment.photo = user.photo;
+    delete comment.updatedAt;
+    delete comment.userId;
+    delete comment.likes;
+
+    return comment;
+  }));
+}
+
 module.exports.get = async (req, _) => {
   const searcher = req.requester;
   const where = { userId: req.params.user || searcher };
 
-  const comments = await database.findAll('Comment', where);
+  const comments = await database.findAll('Comment', where, sort);
   return {
     ...constants['200'],
-    body: await getLikeStatus(comments, searcher),
+    // body: await getLikeStatus(comments, searcher),
+    body: await getUserData(comments),
   };
 };
 
@@ -41,10 +68,11 @@ module.exports.getList = async (req, _) => {
 
   const comments = await database.findAll('Comment', {
     postId: p.id,
-  });
+  }, sort);
   return {
     ...constants['200'],
-    body: await getLikeStatus(comments, req.requester),
+    // body: await getLikeStatus(comments, req.requester),
+    body: await getUserData(comments),
   };
 };
 
@@ -58,7 +86,8 @@ module.exports.find = async (req, _) => {
   };
   return {
     ...constants['200'],
-    body: await getLikeStatus(c, req.requester),
+    // body: await getLikeStatus(c, req.requester),
+    body: await getUserData(comments),
   };
 };
 
