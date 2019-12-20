@@ -29,6 +29,9 @@ module.exports = {
       address: {
         type: Sequelize.STRING
       },
+      latlng: {
+        type: Sequelize.STRING
+      },
       type: {
         type: Sequelize.STRING
       },

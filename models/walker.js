@@ -15,6 +15,7 @@ module.exports = (sequelize, DataTypes) => {
     // associations can be defined here
     Walker.hasOne(models.User, { foreignKey: 'id' });
     Walker.hasMany(models.Transaction, { foreignKey: 'walkerId' });
+    Walker.hasMany(models.Schedule, { foreignKey: 'walkerId' });
   };
   return Walker;
 };

@@ -25,6 +25,24 @@ async function getLikeStatus (posts, userId) {
   return isArray ? result : result[0];
 }
 
+async function getUserData (posts) {
+  const isArray = Array.isArray(posts);
+  posts = isArray ? posts : [ posts ];
+
+  return Promise.all(posts.map (async (post) => {
+    const user = await database.findOne('User', {
+      id: post.userId,
+    });
+
+    post.name = user.name;
+    post.photo = user.photo;
+    delete post.updatedAt;
+    delete post.userId;
+
+    return post;
+  }));
+}
+
 module.exports.get = async (req, _) => {
   const searcher = req.requester;
   const userId = req.params.user || searcher;
@@ -33,7 +51,8 @@ module.exports.get = async (req, _) => {
 
   return {
     ...constants['200'],
-    body: await getLikeStatus(posts, searcher),
+    // body: await getLikeStatus(posts, searcher),
+    body: getUserData(posts),
   };
 };
 
@@ -45,7 +64,8 @@ module.exports.global = async (req, _) => {
 
   return {
     ...constants['200'],
-    body: await getLikeStatus(posts, searcher),
+    // body: await getLikeStatus(posts, searcher),
+    body: await getUserData(posts),
   };
 };
 
@@ -59,7 +79,8 @@ module.exports.find = async (req, _) => {
   };
   return {
     ...constants['200'],
-    body: await getLikeStatus(p, req.requester),
+    // body: await getLikeStatus(p, req.requester),
+    body: await getUserData(p),
   };
 };
 
@@ -67,10 +88,13 @@ module.exports.upload = async (req, _) => {
   req.payload.likes = 0;
   req.payload.userId = req.requester;
 
-  console.log(req.payload)
   await database.create('Post', req.payload);
 
-  return this.get(req);
+  // return this.get(req);
+  return {
+    ...constants['200'],
+    body: null,
+  };
 };
 
 module.exports.update = async (req, _) => {

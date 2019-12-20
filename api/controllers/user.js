@@ -17,6 +17,7 @@ const getDetails = async (id) => {
     body: await database.findOne('User', { id }, {
       attributes: {
         exclude:[
+          'latlng',
           'createdAt',
           'updatedAt',
         ],
@@ -51,6 +52,7 @@ module.exports.login = async (req, _) => {
       null;
 
   if (errResp.message) return errResp;
+  delete usr.latlng;
 
   return {
     ...constants['200'],
