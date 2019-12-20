@@ -1,21 +1,39 @@
 const path = require('path');
 const root = path.resolve('.');
 const Model = require(`${root}/models`);
+const moment = require('moment-timezone');
+
+function processDate (data) {
+  const isArray = Array.isArray(data);
+  data = isArray ? data : [ data ];
+
+  const result = data.map(d => {
+    if (!d.createdAt) return d;
+    d.createdAt = moment(d.createdAt).tz('Asia/Jakarta').format('ss:mm:hh DD/MM/YYYY');
+    return d;
+  });
+
+  return isArray ? result : result[0];
+}
 
 module.exports.findOne = async (model, where, options = {}) => {
-  return Model[model].findOne({
+  const data = await Model[model].findOne({
     where,
     ...options,
     raw: true,
   });
+
+  return processDate(data);
 };
 
 module.exports.findAll = async (model, where, options = {}) => {
-  return Model[model].findAll({
+  const data = await Model[model].findAll({
     where,
     ...options,
     raw: true,
   });
+
+  return processDate(data);
 };
 
 module.exports.create = async (model, data) => {
