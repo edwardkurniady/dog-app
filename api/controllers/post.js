@@ -5,6 +5,13 @@ const constants = require(`${root}/const`);
 const { filter } = require(`${root}/utils`);
 const { database } = require(`${root}/api/services`);
 
+const sort = {
+  order: [
+    ['id', 'DESC'],
+    ['name', 'ASC'],
+  ],
+};
+
 async function getLikeStatus (posts, userId) {
   const isArray = Array.isArray(posts);
   posts = isArray ? posts : [ posts ];
@@ -38,6 +45,7 @@ async function getUserData (posts) {
     post.photo = user.photo;
     delete post.updatedAt;
     delete post.userId;
+    delete post.likes;
 
     return post;
   }));
@@ -47,7 +55,7 @@ module.exports.get = async (req, _) => {
   const searcher = req.requester;
   const userId = req.params.user || searcher;
 
-  const posts = await database.findAll('Post', { userId });
+  const posts = await database.findAll('Post', { userId }, sort);
 
   return {
     ...constants['200'],
@@ -60,7 +68,10 @@ module.exports.global = async (req, _) => {
   const searcher = req.requester;
   req.query.limit = req.query.limit || 10;
 
-  const posts = await database.findAll('Post', {}, req.query);
+  const posts = await database.findAll('Post', {}, {
+    ...sort,
+    ...req.query,
+  });
 
   return {
     ...constants['200'],
