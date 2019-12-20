@@ -13,10 +13,12 @@ const getDetails = async (id) => {
       ],
     },
   };
+  const usr = await database.findOne('User', { id }, options);
+  delete usr.latlng;
   return {
     ...constants['200'],
     body: {
-      ...(await database.findOne('User', { id }, options)),
+      ...usr,
       ...(await database.findOne('Walker', { id }, options)),
     },
   };
