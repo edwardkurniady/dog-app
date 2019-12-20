@@ -52,7 +52,7 @@ module.exports.get = async (req, _) => {
   return {
     ...constants['200'],
     // body: await getLikeStatus(posts, searcher),
-    body: getUserData(posts),
+    body: await getUserData(posts),
   };
 };
 
