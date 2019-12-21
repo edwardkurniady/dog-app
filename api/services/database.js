@@ -10,7 +10,7 @@ function processDate (data) {
 
   const result = data.map(d => {
     if (!d.createdAt) return d;
-    d.createdAt = moment(d.createdAt).tz('Asia/Jakarta').format('ss:mm:hh DD/MM/YYYY');
+    d.createdAt = moment(d.createdAt).tz('Asia/Jakarta').format('hh:mm:ss DD/MM/YYYY');
     return d;
   });
 

@@ -83,7 +83,7 @@ module.exports.register = async (req, _) => {
   );
 
   payload.isWalker = false;
-  payload.type = 'user';
+  payload.type = 'customer';
 
   await database.create('User', payload);
   
