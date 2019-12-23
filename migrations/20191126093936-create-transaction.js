@@ -30,22 +30,28 @@ module.exports = {
         type: Sequelize.STRING
       },
       walkDate: {
-        type: Sequelize.DATE
-      },
-      paymentMethod: {
         type: Sequelize.STRING
+      },
+      basePrice: {
+        type: Sequelize.INTEGER
       },
       totalPrice: {
         type: Sequelize.INTEGER
       },
-      totalPayment: {
+      // distance: {
+      //   type: Sequelize.INTEGER
+      // },
+      duration: {
         type: Sequelize.INTEGER
       },
-      extraPrice: {
-        type: Sequelize.INTEGER
+      beforePhoto: {
+        type: Sequelize.STRING
       },
-      basePrice: {
-        type: Sequelize.INTEGER
+      afterPhoto: {
+        type: Sequelize.STRING
+      },
+      poopPhoto: {
+        type: Sequelize.STRING
       },
       createdAt: {
         allowNull: false,

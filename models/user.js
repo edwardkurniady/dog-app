@@ -14,6 +14,7 @@ module.exports = (sequelize, DataTypes) => {
     dateOfBirth: DataTypes.DATEONLY,
     placeOfBirth: DataTypes.STRING,
     photo: DataTypes.STRING,
+    token: DataTypes.STRING,
   }, {});
   User.associate = function(models) {
     User.hasMany(models.Dog, { foreignKey: 'ownerId' });

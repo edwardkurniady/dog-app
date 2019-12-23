@@ -1,4 +1,5 @@
 const base = 'transaction';
+const { Readable } = require('stream');
 const Joi = require('joi').extend(require('joi-date-extensions'));
 const controller = require('../controllers')[base];
 
@@ -7,31 +8,93 @@ module.exports = [
     method: 'POST',
     path: `/${base}/findawalker`,
     config: {
-      handler : controller.findAWalker,
+      handler : controller.findawalker,
       validate: {
         payload: {
-          paymentMethod: Joi.string(),
-          walkDate: Joi.date().required(),
-          duration: Joi.number().required(),
           dogs: Joi.array().items(Joi.number()).required(),
+          duration: Joi.number().required(),
+          walkDate: Joi.date().format('hh:mm:ss DD/MM/YYYY').required(),
         },
       },
     },
   },
   {
     method: 'POST',
-    path: `/${base}/create`,
+    path: `/${base}/update`,
     config: {
-      handler : controller.create,
+      handler : controller.update,
+      payload: {
+        parse: true,
+        output: 'stream',
+        maxBytes: 3 * 1000 * 1000,
+        allow: 'multipart/form-data',
+      },
       validate: {
         payload: {
-          paymentMethod: Joi.string(),
-          walkDate: Joi.date().required(),
-          walkerId: Joi.number().required(),
-          duration: Joi.number().required(),
-          dogs: Joi.array().items(Joi.number()).required(),
+          afterPhoto: Joi.object().allow(null).type(Readable),
+          beforePhoto: Joi.object().allow(null).type(Readable),
+          // distance: Joi.number().allow(null),
+          poopPhoto: Joi.object().allow(null).type(Readable),
+          status: Joi.string().valid('APPROVED', 'ONGOING', 'DONE', ''),
+          id: Joi.number().required(),
         },
       },
+    },
+  },
+  {
+    method: 'POST',
+    path: `/${base}/order`,
+    config: {
+      handler : controller.order,
+      validate: {
+        payload: {
+          dogs: Joi.array().items(Joi.number()).required(),
+          duration: Joi.number().required(),
+          walkDate: Joi.date().format('hh:mm:ss DD/MM/YYYY').required(),
+          walkerId: Joi.number().required(),
+        },
+      },
+    },
+  },
+  {
+    method: 'POST',
+    path: `/${base}/status`,
+    config: {
+      handler : controller.status,
+      validate: {
+        payload: {
+          transactionId: Joi.number().required(),
+          status: Joi.string().valid('APPROVED', 'ONGOING', 'DONE').required(),
+        },
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: `/${base}/reject/{trx}`,
+    config: {
+      handler : controller.reject,
+    },
+  },
+  {
+    method: 'GET',
+    path: `/${base}/get/user/{userId}`,
+    config: {
+      handler : controller.get,
+    },
+  },
+  {
+    method: 'GET',
+    path: `/${base}/get/walker/{walkerId}`,
+    config: {
+      handler : controller.get,
+    },
+  },
+  {
+    method: 'GET',
+    path: `/${base}/find/{id}`,
+    config: {
+      handler : controller.find,
     },
   },
 ];

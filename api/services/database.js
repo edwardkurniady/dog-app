@@ -47,7 +47,11 @@ module.exports.update = async (model, data, where) => {
 
 module.exports.delete = async (model, where) => {
   await Model[model].destroy({ where });
-}
+};
+
+module.exports.count = async (model, where) => {
+  return Model[model].count({ where });
+};
 
 module.exports.dupCheck = async (model, data, checks = ['phoneNumber', 'email']) => {
   if (!Array.isArray(checks)) checks = [ checks ];

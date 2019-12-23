@@ -9,15 +9,24 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       startTime: {
-        type: Sequelize.DATE
+        type: Sequelize.STRING
       },
       endTime: {
-        type: Sequelize.DATE
+        type: Sequelize.STRING
       },
       walkerId: {
         type: Sequelize.INTEGER,
         references: {
           model: 'Walkers',
+          key: 'id',
+        },
+        onUpdate: 'cascade',
+        onDelete: 'cascade',
+      },
+      transactionId: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'Transactions',
           key: 'id',
         },
         onUpdate: 'cascade',
