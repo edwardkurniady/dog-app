@@ -11,7 +11,8 @@ module.exports = [
       handler : controller.findawalker,
       validate: {
         payload: {
-          dogs: Joi.array().items(Joi.number()).required(),
+          // dogId: Joi.array().items(Joi.number()).required(),
+          dogId: Joi.number().required(),
           duration: Joi.number().required(),
           walkDate: Joi.date().format('hh:mm:ss DD/MM/YYYY').required(),
         },
@@ -48,7 +49,8 @@ module.exports = [
       handler : controller.order,
       validate: {
         payload: {
-          dogs: Joi.array().items(Joi.number()).required(),
+          // dogs: Joi.array().items(Joi.number()).required(),
+          dogId: Joi.number().required(),
           duration: Joi.number().required(),
           walkDate: Joi.date().format('hh:mm:ss DD/MM/YYYY').required(),
           walkerId: Joi.number().required(),

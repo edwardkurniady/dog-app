@@ -64,17 +64,19 @@ module.exports.findawalker = async (req, _) => {
   const user = await database.findOne('User', {
     id: req.requester,
   });
-  const dogs = await database.findAll('Dog', {
-    id: { [Op.in]: req.payload.dogs },
-  });
-  const heaviest = dogs.reduce((acc, curr) => {
-    const accW = acc.weight;
-    const currW = curr.weight;
-    return accW > currW ? accW : currW;
-  }, { weight: 0 });
+  // const dogs = await database.findAll('Dog', {
+  //   id: { [Op.in]: req.payload.dogs },
+  // });
+  const dog = await database.findOne('Dog', { id: dogId });
+  // const heaviest = dogs.reduce((acc, curr) => {
+  //   const accW = acc.weight;
+  //   const currW = curr.weight;
+  //   return accW > currW ? accW : currW;
+  // }, { weight: 0 });
 
   const walkers = await database.findAll('Walker', {
-    maxDogSize: { [Op.gte]: heaviest },
+    // maxDogSize: { [Op.gte]: heaviest },
+    maxDogSize: { [Op.gte]: dog.weight },
     walkDuration: { [Op.gte]: req.payload.duration },
   }, exclude);
   
@@ -97,21 +99,25 @@ module.exports.order = async (req, _) => {
   req.payload.status = 'PENDING';
   req.payload.userId = req.requester;
   req.payload.walkDate = moment(req.payload.walkDate).format(dateFormat);
-  const { dogs } = req.payload;
-  delete req.payload.dogs;
+  // const { dogs } = req.payload;
+  // delete req.payload.dogs;
 
   const walker = await database.findOne('Walker', {
     id: req.payload.walkerId,
   });
-  req.payload.basePrice = walker.pricing;
-  req.payload.totalPrice = walker.pricing * dogs.length;
+  req.payload.price = walker.pricing;
+  // req.payload.totalPrice = walker.pricing * dogs.length;
   const trx = (await database.create('Transaction', req.payload)).dataValues;
-  await Promise.all(dogs.map(async (dogId) => {
-    await database.create('TransactionDetail', {
-      dogId,
-      transactionId: trx.id,
-    });
-  }));
+  // await Promise.all(dogs.map(async (dogId) => {
+  //   await database.create('TransactionDetail', {
+  //     dogId,
+  //     transactionId: trx.id,
+  //   });
+  // }));
+  await database.create('TransactionDetail', {
+    dogId,
+    transactionId: trx.id,
+  });
 
   return {
     ...constants['200'],
@@ -133,7 +139,7 @@ module.exports.update = async (req, _) => {
   };
 
   const available = await isAvailable(trx.walkerId, trx.walkDate, trx.duration);
-  if (req.payload.status === 'ACCEPTED' && !available) return {
+  if (req.payload.status === 'APPROVED' && !available) return {
     ...constants['409'],
     message: 'Walker busy at that time!',
   };
@@ -179,7 +185,7 @@ module.exports.status = async (req, _) => {
   };
 
   const available = await isAvailable(trx.walkerId, trx.walkDate, trx.duration);
-  if (req.payload.status === 'ACCEPTED' && !available) return {
+  if (req.payload.status === 'APPROVED' && !available) return {
     ...constants['409'],
     message: 'Walker busy at that time!',
   };
@@ -246,10 +252,13 @@ module.exports.find = async (req, _) => {
   return {
     ...trx,
     walker,
-    dogs: await Promise.all(detail.map(async (dt) => {
-      return (await Dog.find({
-        params: { dog: dt.dogId },
-      })).body;
-    })),
+    // dogs: await Promise.all(detail.map(async (dt) => {
+    //   return (await Dog.find({
+    //     params: { dog: dt.dogId },
+    //   })).body;
+    // })),
+    dog: (await Dog.find({
+      params: { dog: dt.dogId },
+    })).body,
   };
 };

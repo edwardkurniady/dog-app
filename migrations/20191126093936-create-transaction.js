@@ -32,10 +32,13 @@ module.exports = {
       walkDate: {
         type: Sequelize.STRING
       },
-      basePrice: {
-        type: Sequelize.INTEGER
-      },
-      totalPrice: {
+      // basePrice: {
+      //   type: Sequelize.INTEGER
+      // },
+      // totalPrice: {
+      //   type: Sequelize.INTEGER
+      // },
+      price: {
         type: Sequelize.INTEGER
       },
       // distance: {
