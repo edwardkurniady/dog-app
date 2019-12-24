@@ -3,21 +3,22 @@ const root = path.resolve('.');
 const Model = require(`${root}/models`);
 const moment = require('moment-timezone');
 
-function processDate (data, model) {
-  if (!data) return consistent(data, model);
+function processDate (data, model, options) {
+  if (!data) return consistent(data, model, options);
   const isArray = Array.isArray(data);
   data = isArray ? data : [ data ];
 
   const result = data.map(d => {
-    if (!d.createdAt) return consistent(d, model);
+    if (!d.createdAt) return consistent(d, model, options);
     d.createdAt = moment(d.createdAt).tz('Asia/Jakarta').format('hh:mm:ss DD/MM/YYYY');
-    return consistent(d, model);
+    return consistent(d, model, options);
   });
 
   return isArray ? result : result[0];
 }
 
-function consistent (data, model) {
+function consistent (data, model, options) {
+  const opt = options ? options.exclude || [] : [];
   const notShow = {
     User: [
       'token',
@@ -26,6 +27,7 @@ function consistent (data, model) {
 
   const newData = {};
   Object.keys(Model[model].rawAttributes).forEach(key => {
+    if (opt.indexOf(key) > -1) return;
     if (notShow[model] && notShow[model].indexOf(key) > -1) return;
     newData[key] = data ? data[key] : null;
   });
@@ -39,7 +41,7 @@ module.exports.findOne = async (model, where, options = {}) => {
     raw: true,
   });
 
-  return processDate(data, model);
+  return processDate(data, model, options.attributes);
 };
 
 module.exports.findAll = async (model, where, options = {}) => {
@@ -49,7 +51,7 @@ module.exports.findAll = async (model, where, options = {}) => {
     raw: true,
   });
 
-  return processDate(data, model);
+  return processDate(data, model, options.attributes);
 };
 
 module.exports.create = async (model, data) => {
