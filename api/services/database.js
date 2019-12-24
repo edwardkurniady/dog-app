@@ -26,7 +26,7 @@ function consistent (data, model) {
 
   const newData = {};
   Object.keys(Model[model].rawAttributes).forEach(key => {
-    if (notShow[model].indexOf(key) > -1) return;
+    if (notShow[model] && notShow[model].indexOf(key) > -1) return;
     newData[key] = data ? data[key] : null;
   });
   return newData;
