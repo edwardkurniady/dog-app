@@ -76,6 +76,7 @@ module.exports.findawalker = async (req, _) => {
 
   const walkers = await database.findAll('Walker', {
     // maxDogSize: { [Op.gte]: heaviest },
+    id: { [Op.ne]: req.requester },
     maxDogSize: { [Op.gte]: dog.weight },
     walkDuration: { [Op.gte]: req.payload.duration },
   }, exclude);
