@@ -242,7 +242,7 @@ module.exports.find = async (req, _) => {
   const trx = await database.findOne('Transaction', {
     id: req.params.id,
   }, exclude);
-  const detail = await database.findAll('TransactionDetail', {
+  const detail = await database.findOne('TransactionDetail', {
     transactionId: req.params.id,
   });
 
@@ -259,7 +259,7 @@ module.exports.find = async (req, _) => {
     //   })).body;
     // })),
     dog: (await Dog.find({
-      params: { dog: dt.dogId },
+      params: { dog: detail.dogId },
     })).body,
   };
 };
