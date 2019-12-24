@@ -12,7 +12,7 @@ function processDate (data, model) {
     if (!d.createdAt) return d;
     d.createdAt = moment(d.createdAt).tz('Asia/Jakarta').format('hh:mm:ss DD/MM/YYYY');
     return consistent(d, model);
-  });
+  });console.log(result)
 
   return isArray ? result : result[0];
 }
