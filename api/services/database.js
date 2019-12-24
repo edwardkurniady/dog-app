@@ -39,7 +39,7 @@ module.exports.findOne = async (model, where, options = {}) => {
     raw: true,
   });
 
-  return processDate(data);
+  return processDate(data, model);
 };
 
 module.exports.findAll = async (model, where, options = {}) => {
@@ -49,7 +49,7 @@ module.exports.findAll = async (model, where, options = {}) => {
     raw: true,
   });
 
-  return processDate(data);
+  return processDate(data, model);
 };
 
 module.exports.create = async (model, data) => {
