@@ -4,7 +4,7 @@ const Model = require(`${root}/models`);
 const moment = require('moment-timezone');
 
 function processDate (data, model) {
-  if (!data) return data;
+  if (!data) return consistent(data, model);
   const isArray = Array.isArray(data);
   data = isArray ? data : [ data ];
 
