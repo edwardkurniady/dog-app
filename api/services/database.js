@@ -3,7 +3,7 @@ const root = path.resolve('.');
 const Model = require(`${root}/models`);
 const moment = require('moment-timezone');
 
-function processDate (data) {
+function processDate (data, model) {
   if (!data) return data;
   const isArray = Array.isArray(data);
   data = isArray ? data : [ data ];
@@ -11,10 +11,25 @@ function processDate (data) {
   const result = data.map(d => {
     if (!d.createdAt) return d;
     d.createdAt = moment(d.createdAt).tz('Asia/Jakarta').format('hh:mm:ss DD/MM/YYYY');
-    return d;
+    return consistent(d, model);
   });
 
   return isArray ? result : result[0];
+}
+
+function consistent (data, model) {
+  const notShow = {
+    User: [
+      'token',
+    ],
+  };
+
+  const newData = {};
+  Object.keys(Model[model].rawAttributes).forEach(key => {
+    if (notShow[model].indexOf(key) > -1) return;
+    newData[key] = data ? data[key] : null;
+  });
+  return newData;
 }
 
 module.exports.findOne = async (model, where, options = {}) => {

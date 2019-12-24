@@ -87,7 +87,10 @@ module.exports.findawalker = async (req, _) => {
     const between = walker.travelDistance >= dist;
     const available = await isAvailable(w.id, req.payload.walkDate, req.payload.duration);
 
-    return (between && available) ? walker : null;
+    return (between && available) ? {
+      walker,
+      user: w,
+    } : null;
   }));
 
   return {
