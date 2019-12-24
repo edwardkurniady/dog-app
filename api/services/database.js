@@ -9,10 +9,10 @@ function processDate (data, model) {
   data = isArray ? data : [ data ];
 
   const result = data.map(d => {
-    if (!d.createdAt) return d;
+    if (!d.createdAt) return consistent(d, model);
     d.createdAt = moment(d.createdAt).tz('Asia/Jakarta').format('hh:mm:ss DD/MM/YYYY');
     return consistent(d, model);
-  });console.log(result)
+  });
 
   return isArray ? result : result[0];
 }
