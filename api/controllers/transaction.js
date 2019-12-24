@@ -67,7 +67,7 @@ module.exports.findawalker = async (req, _) => {
   // const dogs = await database.findAll('Dog', {
   //   id: { [Op.in]: req.payload.dogs },
   // });
-  const dog = await database.findOne('Dog', { id: dogId });
+  const dog = await database.findOne('Dog', { id: req.payload.dogId });
   // const heaviest = dogs.reduce((acc, curr) => {
   //   const accW = acc.weight;
   //   const currW = curr.weight;
@@ -115,7 +115,7 @@ module.exports.order = async (req, _) => {
   //   });
   // }));
   await database.create('TransactionDetail', {
-    dogId,
+    dogId: req.payload.dogId,
     transactionId: trx.id,
   });
 
