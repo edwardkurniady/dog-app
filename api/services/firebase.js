@@ -14,3 +14,13 @@ admin.initializeApp({
     client_x509_cert_url: `https://www.googleapis.com/robot/v1/metadata/x509/${encodeURIComponent(process.env.FIREBASE_SA)}`,
   }),
 });
+
+module.exports.notify = async (token, title, body) => {
+  await admin.messaging().send({
+    token,
+    notification: {
+      title,
+      body,
+    },
+  });
+};

@@ -80,14 +80,14 @@ module.exports = [
   },
   {
     method: 'GET',
-    path: `/${base}/get/user/{userId}`,
+    path: `/${base}/get/user/{userId?}`,
     config: {
       handler : controller.get,
     },
   },
   {
     method: 'GET',
-    path: `/${base}/get/walker/{walkerId}`,
+    path: `/${base}/get/walker/{walkerId?}`,
     config: {
       handler : controller.get,
     },
