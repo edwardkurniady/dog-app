@@ -24,7 +24,7 @@ const exclude = {
 };
 
 function inRange (value, start, end) {
-  return (start <= value) && (value <= end);
+  return (start < value) && (value < end);
 }
 
 async function isAvailable (walkerId, walkDate, duration) {
