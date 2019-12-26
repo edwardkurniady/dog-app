@@ -13,7 +13,7 @@ const {
   photo,
 } = require('../services');
 
-const dateFormat = 'hh:mm:ss DD/MM/YYYY';
+const dateFormat = 'HH:mm:ss DD/MM/YYYY';
 const exclude = {
   attributes: {
     exclude:[
