@@ -13,13 +13,18 @@ const getDetails = async (id) => {
       ],
     },
   };
+
+  const walker = await database.findOne('Walker', { id }, options);
+  if (!walker) return {
+    ...constants['404'],
+    message: 'walker not found!',
+  };
   const usr = await database.findOne('User', { id }, options);
-  delete usr.latlng;
   return {
     ...constants['200'],
     body: {
       ...usr,
-      ...(await database.findOne('Walker', { id }, options)),
+      ...walker,
     },
   };
 };
