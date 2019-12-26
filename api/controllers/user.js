@@ -41,9 +41,8 @@ module.exports.login = async (req, _) => {
     },
   };
 
-  const usr = await database.findOne('User', {
-    phoneNumber: payload.phoneNumber,
-  }, options);
+  const where = { phoneNumber: payload.phoneNumber };
+  const usr = await database.findOne('User', where, options);
 
   errResp.message = !usr ?
     'Phone number not registered!' : 
@@ -52,7 +51,10 @@ module.exports.login = async (req, _) => {
       null;
 
   if (errResp.message) return errResp;
-  delete usr.latlng;
+
+  if (payload.token) await database.update('User', {
+    token: payload.token,
+  }, where);
 
   return {
     ...constants['200'],

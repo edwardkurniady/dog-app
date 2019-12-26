@@ -13,6 +13,7 @@ module.exports = [
         payload: {
           password: Joi.string().required(),
           phoneNumber: Joi.string().required(),
+          token: Joi.string().allow(''),
         },
       },
     },

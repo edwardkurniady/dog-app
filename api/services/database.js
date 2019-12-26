@@ -22,6 +22,7 @@ function consistent (data, model, options) {
   const notShow = {
     User: [
       'token',
+      'latlng',
     ],
   };
 

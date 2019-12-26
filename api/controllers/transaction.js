@@ -82,14 +82,14 @@ module.exports.findawalker = async (req, _) => {
   }, exclude);
   
   const filteredWalkers = await Promise.all(walkers.map(async (walker) => {
-    const w = await database.findOne('User', { id: walker.id });
+    const w = await database.findOne('User', { id: walker.id }, exclude);
     const dist = await map.getDistance(w.address, user.address);
     const between = walker.travelDistance >= dist;
     const available = await isAvailable(w.id, req.payload.walkDate, req.payload.duration);
 
     return (between && available) ? {
-      walker,
-      user: w,
+      ...w,
+      ...walker,
     } : null;
   }));
 
