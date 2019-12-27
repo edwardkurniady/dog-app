@@ -231,8 +231,15 @@ module.exports.get = async (req, _) => {
     } = await database.findOne('User', {
       id: t[key],
     });
-    delete t.userId;
-    delete t.walkerId;
+    [
+      'userId',
+      'walkerId',
+      ...[
+        'before',
+        'after',
+        'poop',
+      ].map(type => `${type}Photo`),
+    ].map(k => delete t[k]);
     return {
       ...t,
       name,
