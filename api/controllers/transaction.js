@@ -220,10 +220,29 @@ module.exports.reject = async (req, _) => {
 module.exports.get = async (req, _) => {
   const key = req.route.path.match(/\{(.*?)\?}/)[1];
   req.params[key] = req.params[key] || req.requester;
-  const trx = await database.findAll('Transaction', {
+  const transactions = await database.findAll('Transaction', {
     ...req.params,
     status: { [Op.not]: 'DONE' },
   }, exclude);
+  const trx = await Promise.all(transactions.map(async (t) => {
+    const {
+      name,
+      address,
+    } = await database.findOne('User', {
+      id: t[key],
+    });
+    delete t.userId;
+    delete t.walkerId;
+    return {
+      ...t,
+      name,
+      address,
+      dogId: await database.findOne('TransactionDetail', {
+        transactionId: t.id,
+      }),
+    };
+  }));
+
   const order = [
     'ONGOING',
     'PENDING',
