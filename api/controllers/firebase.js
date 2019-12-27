@@ -3,10 +3,11 @@ const root = path.resolve('.');
 const Model = require(`${root}/models`);
 const constants = require(`${root}/const`);
 const Promise = require('bluebird');
-const admin = Promise.promisifyAll(require('firebase-admin'));
+// const admin = Promise.promisifyAll(require('firebase-admin'));
+const admin = require('firebase-admin');
 const defaultConfig = require(path.resolve('.', 'const')).firebase;
 
-admin.initializeAppAsync({
+admin.initializeApp({
   databaseURL: `https://${process.env.FIREBASE_ID}.firebaseio.com`,
   credential: admin.credential.cert({
     ...defaultConfig,
@@ -51,15 +52,17 @@ module.exports.notification = async (req, _) => {
     id: payload.id,
     duration: t.duration,
   };
-
-  await admin.messaging().send({
+try{
+  await Promise.promisify(admin.messaging().send({
     data,
     token: u.token,
     notification: {
       title: payload.title,
       body: payload.body,
     },
-  });
+  }));
+} catch(e) {console.log(e)}
+  
 
   return {
     ...constants['200'],
