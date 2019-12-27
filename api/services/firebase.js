@@ -17,7 +17,7 @@ admin.initializeApp({
 });
 
 module.exports.notify = async (token, title, body) => {
-  await Promise.pradmin.messaging().send({
+  await admin.messaging().send({
     token,
     notification: {
       title,
