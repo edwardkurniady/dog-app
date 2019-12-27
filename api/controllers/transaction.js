@@ -236,8 +236,7 @@ module.exports.get = async (req, _) => {
       id: t[map[key]],
     });
     [
-      'userId',
-      'walkerId',
+      `${key}`,
       ...[
         'before',
         'after',
