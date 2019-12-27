@@ -11,6 +11,7 @@ const {
 } = require('../services');
 
 async function getBreedName (dogs = []) {
+  if (!dogs) return dogs;
   const isArray = Array.isArray(dogs);
   dogs = isArray ? dogs : [ dogs ];
 
