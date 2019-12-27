@@ -219,6 +219,10 @@ module.exports.reject = async (req, _) => {
 
 module.exports.get = async (req, _) => {
   const key = req.route.path.match(/\{(.*?)\?}/)[1];
+  const map = {
+    userId: 'walkerId',
+    walkerId: 'userId',
+  };
   req.params[key] = req.params[key] || req.requester;
   const transactions = await database.findAll('Transaction', {
     ...req.params,
@@ -229,7 +233,7 @@ module.exports.get = async (req, _) => {
       name,
       address,
     } = await database.findOne('User', {
-      id: t[key],
+      id: t[map[key]],
     });
     [
       'userId',
