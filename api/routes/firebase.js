@@ -10,9 +10,11 @@ module.exports = [
       handler: controller.notification,
       validate: {
         payload: {
-          userId: Joi.number().required(),
           title: Joi.string().required(),
           body: Joi.string().required(),
+          From: Joi.string().required(),
+          description: Joi.string().required(),
+          id: Joi.number().required(),
         },
       },
     },
