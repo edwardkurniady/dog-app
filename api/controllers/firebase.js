@@ -1,8 +1,8 @@
 const path = require('path');
 const root = path.resolve('.');
+const Model = require(`${root}/models`);
 const constants = require(`${root}/const`);
 const {
-  database,
   firebase,
 } = require('../services');
 const {
@@ -12,7 +12,7 @@ const {
 
 module.exports.notification = async (req, _) => {
   const { payload } = req;
-  const u = await database.findOne('User', { id: payload.userId });
+  const u = await Model.User.findOne({ id: payload.userId });
   const message = u ? (u.token ? null : 'User device not registered!') : 'User not found!';
   if (message) return {
     ...constants['404'],
