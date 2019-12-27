@@ -46,7 +46,7 @@ module.exports.notification = async (req, _) => {
 
   const data = !(payload.From === 'Customer') ? {} : {
     From: payload.From,
-    photo: u.photo,
+    photo: u.photo || '',
     description: payload.description,
     date: t.walkDate,
     id: `${payload.id}`,
