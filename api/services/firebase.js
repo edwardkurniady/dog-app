@@ -1,5 +1,6 @@
 const path = require('path');
-const admin = require("firebase-admin");
+const Promise = require('bluebird');
+const admin = Promise.promisifyAll(require("firebase-admin"));
 const defaultConfig = require(path.resolve('.', 'const')).firebase;
 
 admin.initializeApp({
@@ -16,7 +17,7 @@ admin.initializeApp({
 });
 
 module.exports.notify = async (token, title, body) => {
-  await admin.messaging().send({
+  await Promise.pradmin.messaging().send({
     token,
     notification: {
       title,
