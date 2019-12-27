@@ -255,7 +255,7 @@ module.exports.get = async (req, _) => {
       photo,
       dogId: (await database.findOne('TransactionDetail', {
         transactionId: t.id,
-      })).id,
+      })).dogId,
     };
   }));
 
