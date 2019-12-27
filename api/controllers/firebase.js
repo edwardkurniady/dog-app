@@ -52,17 +52,14 @@ module.exports.notification = async (req, _) => {
     id: payload.id,
     duration: t.duration,
   };
-try{
   await Promise.promisify(admin.messaging().send({
     data,
-    token: u.token,
+    token: r.token,
     notification: {
       title: payload.title,
       body: payload.body,
     },
   }));
-} catch(e) {console.log(e)}
-  
 
   return {
     ...constants['200'],
