@@ -52,6 +52,7 @@ module.exports.notification = async (req, _) => {
     id: `${payload.id}`,
     duration: `${t.duration}`,
   };
+  console.log(data)
 
   try{
   await Promise.promisify(admin.messaging().send({
