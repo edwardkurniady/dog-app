@@ -62,7 +62,7 @@ module.exports.notification = async (req, _) => {
       body: payload.body,
     },
   }));
-  }catch(e) console.log(e)
+  }catch(e) {console.log(e)}
 
   return {
     ...constants['200'],
