@@ -49,7 +49,7 @@ module.exports.notification = async (req, _) => {
     description: payload.description,
     date: t.walkDate,
     id: payload.id,
-    time: moment(t.walkDate, 'HH:mm:ss DD/MM/YYYY').valueOf(),
+    duration: t.duration,
   };
 
   await admin.messaging().send({
