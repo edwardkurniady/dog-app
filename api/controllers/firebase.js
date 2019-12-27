@@ -12,7 +12,9 @@ const {
 
 module.exports.notification = async (req, _) => {
   const { payload } = req;
-  const u = await Model.User.findOne({ id: payload.userId });
+  const u = await Model.User.findOne({
+    where: { id: payload.userId },
+  });
   const message = u ? (u.token ? null : 'User device not registered!') : 'User not found!';
   if (message) return {
     ...constants['404'],
