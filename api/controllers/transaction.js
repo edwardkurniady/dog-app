@@ -232,10 +232,13 @@ module.exports.get = async (req, _) => {
     const {
       name,
       address,
+      phoneNumber,
+      photo,
     } = await database.findOne('User', {
       id: t[map[key]],
     });
     t.clientId = t[map[key]];
+    t.phoneNumber = key === 'userId' ? phoneNumber : ''; 
     [
       'userId',
       'walkerId',
@@ -249,6 +252,7 @@ module.exports.get = async (req, _) => {
       ...t,
       name,
       address,
+      photo,
       dogId: (await database.findOne('TransactionDetail', {
         transactionId: t.id,
       })).id,
