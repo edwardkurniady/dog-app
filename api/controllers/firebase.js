@@ -2,11 +2,11 @@ const path = require('path');
 const root = path.resolve('.');
 const Model = require(`${root}/models`);
 const constants = require(`${root}/const`);
-const admin = require("firebase-admin");
-const moment = require('moment-timezone');
+const Promise = require('bluebird');
+const admin = Promise.promisifyAll(require('firebase-admin'));
 const defaultConfig = require(path.resolve('.', 'const')).firebase;
 
-admin.initializeApp({
+admin.initializeAppAsync({
   databaseURL: `https://${process.env.FIREBASE_ID}.firebaseio.com`,
   credential: admin.credential.cert({
     ...defaultConfig,
