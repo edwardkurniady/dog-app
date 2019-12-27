@@ -49,8 +49,8 @@ module.exports.notification = async (req, _) => {
     photo: u.photo,
     description: payload.description,
     date: t.walkDate,
-    id: payload.id,
-    duration: t.duration,
+    id: `${payload.id}`,
+    duration: `${t.duration}`,
   };
 
   try{
