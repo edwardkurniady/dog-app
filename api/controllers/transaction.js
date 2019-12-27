@@ -237,9 +237,9 @@ module.exports.get = async (req, _) => {
       ...t,
       name,
       address,
-      dogId: await database.findOne('TransactionDetail', {
+      dogId: (await database.findOne('TransactionDetail', {
         transactionId: t.id,
-      }),
+      })).id,
     };
   }));
 
