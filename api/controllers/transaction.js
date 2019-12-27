@@ -235,8 +235,10 @@ module.exports.get = async (req, _) => {
     } = await database.findOne('User', {
       id: t[map[key]],
     });
+    t.clientId = t[map[key]];
     [
-      `${key}`,
+      'userId',
+      'walkerId',
       ...[
         'before',
         'after',
