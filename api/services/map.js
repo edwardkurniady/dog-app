@@ -31,6 +31,7 @@ module.exports.getLatLng = async (address) => {
 };
 
 module.exports.getDistance = async (origins, destinations) => {
+  const round = (val) => Number((val/1000).toFixed(1)) * 1000;
   const resp = (await req.get('/distancematrix/json', {
     qs: {
       key,
@@ -39,5 +40,15 @@ module.exports.getDistance = async (origins, destinations) => {
     },
   })).rows[0].elements[0];
   
-  return Number((resp.distance.value/1000).toFixed(1)) * 1000;
+  if (resp.status === 'OK') return round(resp.distance.value);
+  const resp2 = (await req.get('/distancematrix/json', {
+    qs: {
+      key,
+      origins: await this.getLatLng(origins),
+      destinations: await this.getLatLng(destinations),
+    },
+  })).rows[0].elements[0];
+
+  console.log(resp2)
+  return round(resp2.distance.value);
 };
