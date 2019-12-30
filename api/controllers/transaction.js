@@ -109,7 +109,7 @@ module.exports.order = async (req, _) => {
   const walker = await database.findOne('Walker', {
     id: req.payload.walkerId,
   });
-  req.payload.price = walker.pricing;
+  req.payload.price = walker.pricing * req.payload.duration;
   // req.payload.totalPrice = walker.pricing * dogs.length;
   const trx = (await database.create('Transaction', req.payload)).dataValues;
   // await Promise.all(dogs.map(async (dogId) => {
