@@ -125,7 +125,9 @@ module.exports.order = async (req, _) => {
 
   return {
     ...constants['200'],
-    body: null,
+    body: {
+      id: trx.id,
+    },
   };
 };
 
