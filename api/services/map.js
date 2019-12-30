@@ -41,14 +41,14 @@ module.exports.getDistance = async (origins, destinations) => {
   })).rows[0].elements[0];
   
   if (resp.status === 'OK') return round(resp.distance.value);
-  const resp2 = (await req.get('/distancematrix/json', {
-    qs: {
-      key,
-      origins: await this.getLatLng(origins),
-      destinations: await this.getLatLng(destinations),
-    },
-  })).rows[0].elements[0];
+  return 99999999;
+  // const resp2 = (await req.get('/distancematrix/json', {
+  //   qs: {
+  //     key,
+  //     origins: await this.getLatLng(origins),
+  //     destinations: await this.getLatLng(destinations),
+  //   },
+  // })).rows[0].elements[0];
 
-  console.log(resp2)
-  return round(resp2.distance.value);
+  // return round(resp2.distance.value);
 };
