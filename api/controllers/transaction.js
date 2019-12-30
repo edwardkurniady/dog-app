@@ -240,7 +240,9 @@ module.exports.get = async (req, _) => {
       id: t[map[key]],
     });
     t.clientId = t[map[key]];
-    t.phoneNumber = key === 'userId' ? phoneNumber : ''; 
+    t.phoneNumber = key === 'userId' ? phoneNumber : (await database.findOne('User', {
+      id: t.walkerId,
+    })).phoneNumber;
     [
       'userId',
       'walkerId',
