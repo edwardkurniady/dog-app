@@ -36,9 +36,9 @@ module.exports.update = async (type, oldId, newId) => {
   if (!newId) return;
   const dir = type.split('/');
   const oldName = `${dir[0]}/${oldId}/${dir[1]}`;
-  if (newId === oldId) return;
-
   const newName = `${dir[0]}/${newId}/${dir[1]}`;
+
+  if (newId === oldId) return;
 
   const bucket = initiateBucket();
   const oldFile = bucket.file(oldName);

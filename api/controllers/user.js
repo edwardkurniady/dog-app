@@ -121,6 +121,7 @@ module.exports.update = async (req, _) => {
     payload.phoneNumber || user.phoneNumber,
     'user/profile',
   );
+  filter(payload);
 
   await database.update('User', payload, { id: payload.id });
   
