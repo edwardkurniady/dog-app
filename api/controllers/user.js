@@ -76,13 +76,13 @@ module.exports.register = async (req, _) => {
     ...constants['409'],
     message: `duplicate ${key}!`,
   };
-
-  filter(payload);
+  
   payload.photo = await photo.upload(
     payload.photo,
     payload.phoneNumber,
     'user/profile'
   );
+  filter(payload);
 
   payload.isWalker = false;
   payload.type = 'customer';
@@ -110,19 +110,19 @@ module.exports.update = async (req, _) => {
     message: `duplicate ${key}!`,
   };
 
+  payload.photo = await photo.upload(
+    payload.photo,
+    user.phoneNumber,
+    'user/profile',
+  );
   filter(payload);
-  if (payload.phoneNumber !== user.phoneNumber) await photo.update(
+  const movePhoto = user.photo && (payload.phoneNumber !== user.phoneNumber);
+  if (movePhoto) payload.photo = await photo.update(
     'user/profile',
     user.phoneNumber,
     payload.phoneNumber,
   );
-  payload.photo = await photo.upload(
-    payload.photo,
-    payload.phoneNumber || user.phoneNumber,
-    'user/profile',
-  );
-  filter(payload);
-
+  
   await database.update('User', payload, { id: payload.id });
   
   return getDetails(payload.id);
