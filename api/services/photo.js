@@ -33,6 +33,7 @@ module.exports.upload = async (stream, id, type) => {
 };
 
 module.exports.update = async (type, oldId, newId) => {
+  try{
   if (!newId) return null;
   const dir = type.split('/');
   const oldName = `${dir[0]}/${oldId}/${dir[1]}`;
@@ -42,7 +43,8 @@ module.exports.update = async (type, oldId, newId) => {
   const oldFile = bucket.file(oldName);
   await oldFile.copy(newName);
   await oldFile.delete();
-  return `${storageURL}/${process.env.BUCKET_NAME}/${newName}`
+  return `${storageURL}/${process.env.BUCKET_NAME}/${newName}`;
+}catch(E){console.log(E)}
 };
 
 module.exports.delete = async (id, type) => {
