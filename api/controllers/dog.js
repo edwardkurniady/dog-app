@@ -37,9 +37,9 @@ module.exports.register = async (req, _) => {
   const dog = await database.create('Dog', req.payload);
   const dogId = dog.dataValues.id;
 
-  await dog.update({
-    photo: await photo.upload(p, dogId, 'dog/profile'),
-  });
+  if (p) await database.update('Dog', {
+    photo: await photo.upload(p, dogId, 'dog/profile')
+  }, { id: dogId });
 
   return {
     ...constants['200'],

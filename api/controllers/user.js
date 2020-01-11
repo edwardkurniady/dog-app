@@ -111,11 +111,16 @@ module.exports.update = async (req, _) => {
   };
 
   filter(payload);
-  payload.photo = await photo.upload(
-    payload.photo, 
-    user.phoneNumber, 
+  if (payload.phoneNumber !== user.phoneNumber) await photo.update(
     'user/profile',
-  ); 
+    user.phoneNumber,
+    payload.phoneNumber,
+  );
+  payload.photo = await photo.upload(
+    payload.photo,
+    payload.phoneNumber || user.phoneNumber,
+    'user/profile',
+  );
 
   await database.update('User', payload, { id: payload.id });
   
