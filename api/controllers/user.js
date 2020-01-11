@@ -122,6 +122,7 @@ module.exports.update = async (req, _) => {
     user.phoneNumber,
     payload.phoneNumber,
   );
+  filter(payload);
   
   await database.update('User', payload, { id: payload.id });
   
