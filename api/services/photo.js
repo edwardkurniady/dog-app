@@ -1,4 +1,5 @@
 const path = require('path');
+const Promise = require('bluebird');
 const { storageURL } = require(path.resolve('.', 'const'));
 const { Storage } = require('@google-cloud/storage');
 
@@ -18,7 +19,7 @@ module.exports.upload = async (stream, id, type) => {
   const bucket = initiateBucket();
   const file = bucket.file(filename);
 
-  stream.pipe(file.createWriteStream({
+  await Promise.promisify(stream.pipe(file.createWriteStream({
     gzip: true,
     public: true,
     metadata: {
@@ -27,15 +28,9 @@ module.exports.upload = async (stream, id, type) => {
         custom: 'metadata',
       },
     },
-  }));
-
-  const wait = async (file) => {
-    const exist = await file.exists();
-    if (exist[0]) return `${storageURL}/${process.env.BUCKET_NAME}/${filename}`;
-    return wait(file);
-  };
-
-  return wait(file);
+  })));
+  
+  return `${storageURL}/${process.env.BUCKET_NAME}/${filename}`;
 };
 
 module.exports.update = async (type, oldId, newId) => {
