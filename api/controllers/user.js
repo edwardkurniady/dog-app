@@ -98,7 +98,8 @@ module.exports.register = async (req, _) => {
 module.exports.update = async (req, _) => {
   const payload = processCred(req.payload);
   payload.id = req.requester;
-  const user = await database.findOne('User', { id: payload.id });
+  const where = { id: payload.id };
+  const user = await database.findOne('User', where);
   const {
     key,
     duplicate,
@@ -116,15 +117,20 @@ module.exports.update = async (req, _) => {
     'user/profile',
   );
   filter(payload);
-  const movePhoto = user.photo && (payload.phoneNumber !== user.phoneNumber);
+  if (payload.photo) await database.update('User', {
+    photo: payload.photo,
+  }, where);
+
+  const u = await database.findOne('User', where);
+  const movePhoto = u.photo && (payload.phoneNumber !== u.phoneNumber);
   if (movePhoto) payload.photo = await photo.update(
     'user/profile',
-    user.phoneNumber,
+    u.phoneNumber,
     payload.phoneNumber,
   );
   filter(payload);
   
-  await database.update('User', payload, { id: payload.id });
+  await database.update('User', payload, where);
   
   return getDetails(payload.id);
 };
