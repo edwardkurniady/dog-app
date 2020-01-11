@@ -123,11 +123,13 @@ module.exports.update = async (req, _) => {
 
   const u = await database.findOne('User', where);
   const movePhoto = u.photo && (payload.phoneNumber !== u.phoneNumber);
+  console.log('GG1')
   if (movePhoto) payload.photo = await photo.update(
     'user/profile',
     u.phoneNumber,
     payload.phoneNumber,
   );
+  console.log('GG2')
   filter(payload);
   
   await database.update('User', payload, where);
