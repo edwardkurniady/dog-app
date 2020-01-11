@@ -29,6 +29,8 @@ module.exports.upload = async (stream, id, type) => {
     },
   }));
 
+  console.log(await file.exists())
+
   return `${storageURL}/${process.env.BUCKET_NAME}/${filename}`;
 };
 
