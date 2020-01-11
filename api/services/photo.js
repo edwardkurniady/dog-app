@@ -29,9 +29,13 @@ module.exports.upload = async (stream, id, type) => {
     },
   }));
 
-  console.log(await file.exists())
+  const wait = async (file) => {
+    const exist = await file.exists();
+    if (exist[0]) return `${storageURL}/${process.env.BUCKET_NAME}/${filename}`;
+    return wait(file);
+  };
 
-  return `${storageURL}/${process.env.BUCKET_NAME}/${filename}`;
+  return wait(file);
 };
 
 module.exports.update = async (type, oldId, newId) => {
