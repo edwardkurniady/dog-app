@@ -179,7 +179,7 @@ module.exports.isRated = async (req, _) => {
   });
   const m = (wd) => moment(wd, dateFormat).valueOf();
 
-  const t = trx.sort((a, b) => m(a.walkDate) - m(b.walkDate));
+  const t = trx.sort((a, b) => m(b.walkDate) - m(a.walkDate));
   return {
     ...constants['200'],
     body: t.length > 0 ? await processTrx(t[0]) : null,
