@@ -298,7 +298,7 @@ module.exports.get = async (req, _) => {
       const bIndex = order.indexOf(b.status);
       if (aIndex > bIndex) return 1;
       if (aIndex < bIndex) return -1;
-      return m(a.walkDate) - m(b.walkDate);
+      return m(b.walkDate) - m(a.walkDate);
     }),
   };
 };
