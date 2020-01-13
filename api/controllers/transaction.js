@@ -39,6 +39,8 @@ async function isAvailable (walkerId, walkDate, duration) {
     endTime = moment(endTime, dateFormat).valueOf();
     available = available && !inRange(startTime, start, end);
     available = available && !inRange(endTime, start, end);
+    available = available && !inRange(start, startTime, endTime);
+    available = available && !inRange(end, startTime, endTime);
   }
 
   return available;
