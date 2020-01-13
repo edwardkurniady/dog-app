@@ -27,7 +27,7 @@ function inRange (value, start, end) {
   return (start < value) && (value < end);
 }
 
-async function processTrx (t, key) {
+async function processTrx (t, key = 'userId') {
   const map = {
     userId: 'walkerId',
     walkerId: 'userId',
