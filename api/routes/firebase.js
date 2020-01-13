@@ -13,7 +13,7 @@ module.exports = [
           title: Joi.string().required(),
           body: Joi.string().required(),
           From: Joi.string().required(),
-          description: Joi.string().required(),
+          description: Joi.string(),
           id: Joi.number().required(),
         },
       },
