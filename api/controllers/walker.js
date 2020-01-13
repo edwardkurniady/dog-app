@@ -83,6 +83,6 @@ module.exports.rate = async (req, _) => {
   }, { id: req.payload.orderId });
   return {
     ...constants['200'],
-    body: await getDetails(req.payload.id),
+    body: null,
   };
 };
