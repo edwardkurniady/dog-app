@@ -13,6 +13,7 @@ module.exports = (sequelize, DataTypes) => {
     beforePhoto: DataTypes.STRING,
     afterPhoto: DataTypes.STRING,
     poopPhoto: DataTypes.STRING,
+    isRated: DataTypes.BOOLEAN,
   }, {});
   Transaction.associate = function(models) {
     // associations can be defined here

@@ -27,6 +27,44 @@ function inRange (value, start, end) {
   return (start < value) && (value < end);
 }
 
+async function processTrx (t, key) {
+  const map = {
+    userId: 'walkerId',
+    walkerId: 'userId',
+  };
+  const {
+    name,
+    address,
+    phoneNumber,
+    photo,
+  } = await database.findOne('User', {
+    id: t[map[key]],
+  });
+  t.clientId = t[map[key]];
+  t.phoneNumber = key === 'userId' ? phoneNumber : (await database.findOne('User', {
+    id: t.walkerId,
+  })).phoneNumber;
+  [
+    'userId',
+    'walkerId',
+    // 'isRated',
+    ...[
+      'before',
+      'after',
+      'poop',
+    ].map(type => `${type}Photo`),
+  ].map(k => delete t[k]);
+  return {
+    ...t,
+    name,
+    address,
+    photo,
+    dogId: (await database.findOne('TransactionDetail', {
+      transactionId: t.id,
+    })).dogId,
+  };
+}
+
 async function isAvailable (walkerId, walkDate, duration) {
   const start = moment(walkDate, dateFormat).valueOf();
   const end = moment(walkDate, dateFormat).add(duration, 'hours').valueOf();
@@ -133,6 +171,16 @@ module.exports.order = async (req, _) => {
   };
 };
 
+module.exports.isRated = async (req, _) => {
+  const trx = await database.findOne('Transaction', {
+    userId: req.requester,
+  });
+  return {
+    ...constants['200'],
+    body: await processTrx(trx),
+  };
+};
+
 module.exports.update = async (req, _) => {
   const trx = await database.findOne('Transaction', {
     id: req.payload.id,
@@ -223,47 +271,13 @@ module.exports.reject = async (req, _) => {
 
 module.exports.get = async (req, _) => {
   const key = req.route.path.match(/\{(.*?)\?}/)[1];
-  const map = {
-    userId: 'walkerId',
-    walkerId: 'userId',
-  };
+  
   req.params[key] = req.params[key] || req.requester;
   const transactions = await database.findAll('Transaction', {
     ...req.params,
     status: { [Op.not]: 'DONE' },
   }, exclude);
-  const trx = await Promise.all(transactions.map(async (t) => {
-    const {
-      name,
-      address,
-      phoneNumber,
-      photo,
-    } = await database.findOne('User', {
-      id: t[map[key]],
-    });
-    t.clientId = t[map[key]];
-    t.phoneNumber = key === 'userId' ? phoneNumber : (await database.findOne('User', {
-      id: t.walkerId,
-    })).phoneNumber;
-    [
-      'userId',
-      'walkerId',
-      ...[
-        'before',
-        'after',
-        'poop',
-      ].map(type => `${type}Photo`),
-    ].map(k => delete t[k]);
-    return {
-      ...t,
-      name,
-      address,
-      photo,
-      dogId: (await database.findOne('TransactionDetail', {
-        transactionId: t.id,
-      })).dogId,
-    };
-  }));
+  const trx = await Promise.all(transactions.map(async (t) => processTrx(t, key)));
 
   const order = [
     'ONGOING',

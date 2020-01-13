@@ -73,6 +73,13 @@ module.exports = [
   },
   {
     method: 'GET',
+    path: `/${base}/isRated`,
+    config: {
+      handler : controller.isRated,
+    },
+  },
+  {
+    method: 'GET',
     path: `/${base}/reject/{trx}`,
     config: {
       handler : controller.reject,

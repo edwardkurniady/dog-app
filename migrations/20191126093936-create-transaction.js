@@ -56,6 +56,9 @@ module.exports = {
       poopPhoto: {
         type: Sequelize.STRING
       },
+      isRated: {
+        type: Sequelize.BOOLEAN
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
