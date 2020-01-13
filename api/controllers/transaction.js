@@ -173,12 +173,17 @@ module.exports.order = async (req, _) => {
 };
 
 module.exports.isRated = async (req, _) => {
-  const trx = await database.findOne('Transaction', {
+  const trx = await database.findAll('Transaction', {
     userId: req.requester,
+  }, {
+    status: { [Op.in]: [ 'ONGOING', 'DONE' ] },
   });
+  const m = (wd) => moment(wd, dateFormat).valueOf();
+
+  const t = trx.sort((a, b) => m(a.walkDate) - m(b.walkDate))[0];
   return {
     ...constants['200'],
-    body: await processTrx(trx),
+    body: await processTrx(t),
   };
 };
 
