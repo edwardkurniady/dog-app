@@ -175,7 +175,6 @@ module.exports.order = async (req, _) => {
 module.exports.isRated = async (req, _) => {
   const trx = await database.findAll('Transaction', {
     userId: req.requester,
-  }, {
     status: { [Op.in]: [ 'ONGOING', 'DONE' ] },
   });
   const m = (wd) => moment(wd, dateFormat).valueOf();
