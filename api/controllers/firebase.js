@@ -38,6 +38,7 @@ module.exports.notification = async (req, _) => {
       id: t[receiver],
     },
   });
+  
   const message = r.token ? null : 'User device not registered!';
   if (message) return {
     ...constants['404'],
@@ -46,6 +47,7 @@ module.exports.notification = async (req, _) => {
 
   const data = !(payload.From === 'Customer') ? {
     From: payload.From,
+    description: payload.description,
   } : {
     From: payload.From,
     photo: u.photo || '',
