@@ -143,6 +143,7 @@ module.exports.order = async (req, _) => {
   req.payload.status = 'PENDING';
   req.payload.userId = req.requester;
   req.payload.walkDate = moment(req.payload.walkDate).format(dateFormat);
+  req.payload.isRated = false;
   // const { dogs } = req.payload;
   // delete req.payload.dogs;
 
