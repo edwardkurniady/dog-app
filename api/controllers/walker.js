@@ -80,7 +80,7 @@ module.exports.rate = async (req, _) => {
   await database.update('Walker', w, where);
   await database.update('Transaction', {
     isRated: true,
-  }, { id: req.payload.transactionId });
+  }, { id: req.payload.orderId });
   return {
     ...constants['200'],
     body: await getDetails(req.payload.id),

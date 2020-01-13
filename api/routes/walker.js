@@ -44,8 +44,9 @@ module.exports = [
       handler: controller.rate,
       validate: {
         payload: {
-          id: Joi.number(),
-          rate: Joi.number(),
+          id: Joi.number().required(),
+          rate: Joi.number().required(),
+          orderId: Joi.number().required(),
         },
       },
     },
