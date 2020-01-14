@@ -10,6 +10,7 @@ function processDate (data, model, options) {
   data = isArray ? data : [ data ];
 
   const result = data.map(d => {
+    if (d.dateOfBirth) d.dateOfBirth = moment(d.dateOfBirth, 'YYYY-MM-DD').format('DD-MM-YYYY');
     if (!d.createdAt) return consistent(d, model, options);
     d.createdAt = moment(d.createdAt).tz('Asia/Jakarta').format('HH:mm:ss DD/MM/YYYY');
     return consistent(d, model, options);
