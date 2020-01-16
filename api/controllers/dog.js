@@ -73,9 +73,10 @@ module.exports.update = async (req, _) => {
   filter(req.payload);
   await database.update('Dog', req.payload, where);
 
-  return this.get({
-    params: { user: req.requester },
-  });
+  return {
+    ...constants['200'],
+    body: null,
+  };
 };
 
 module.exports.find = async (req, _) => {
@@ -99,9 +100,10 @@ module.exports.delete = async (req, _) => {
 
   await photo.delete(req.payload.id, 'dog/profile');
   await database.delete('Dog', where);
-  return this.get({
-    params: { user: req.requester },
-  });
+  return {
+    ...constants['200'],
+    body: null,
+  };
 };
 
 module.exports.deletePhoto = async (req, _) => {
