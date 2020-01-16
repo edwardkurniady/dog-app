@@ -21,7 +21,6 @@ async function getBreedName (dogs = []) {
     delete dog.createdAt;
     delete dog.updatedAt;
     delete dog.ownerId;
-    delete dog.breedId;
     return dog;
   }));
 
