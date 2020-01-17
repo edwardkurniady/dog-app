@@ -31,7 +31,7 @@ async function getLikeStatus (posts, userId) {
   return isArray ? result : result[0];
 }
 
-async function getUserData (posts) {
+async function getUserData (posts, me) {
   const isArray = Array.isArray(posts);
   posts = isArray ? posts : [ posts ];
 
@@ -42,6 +42,7 @@ async function getUserData (posts) {
 
     post.name = user.name;
     post.photo = user.photo;
+    post.isMyPost = me === post.userId;
     delete post.updatedAt;
     delete post.userId;
     delete post.likes;
@@ -61,7 +62,7 @@ module.exports.get = async (req, _) => {
   return {
     ...constants['200'],
     // body: await getLikeStatus(posts, searcher),
-    body: await getUserData(posts),
+    body: await getUserData(posts, searcher),
   };
 };
 
@@ -77,7 +78,7 @@ module.exports.global = async (req, _) => {
   return {
     ...constants['200'],
     // body: await getLikeStatus(posts, searcher),
-    body: await getUserData(posts),
+    body: await getUserData(posts, searcher),
   };
 };
 
@@ -92,7 +93,7 @@ module.exports.find = async (req, _) => {
   return {
     ...constants['200'],
     // body: await getLikeStatus(p, req.requester),
-    body: await getUserData(p),
+    body: await getUserData(p, req.requester),
   };
 };
 
@@ -125,7 +126,11 @@ module.exports.update = async (req, _) => {
   filter(req.payload);
   await database.update('Post', req.payload, where);
 
-  return this.get(req);
+  // return this.get(req);
+  return {
+    ...constants['200'],
+    body: null,
+  };
 };
 
 module.exports.delete = async (req, _) => {
@@ -143,7 +148,11 @@ module.exports.delete = async (req, _) => {
 
   await database.delete('Post', where);
 
-  return this.get(req);
+  // return this.get(req);
+  return {
+    ...constants['200'],
+    body: null,
+  };
 };
 
 module.exports.like = async (req, _) => {
