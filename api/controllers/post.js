@@ -111,7 +111,7 @@ module.exports.upload = async (req, _) => {
 };
 
 module.exports.update = async (req, _) => {
-  const where = { id: req.payload.id };
+  const where = { id: req.params.post };
   const p = await database.findOne('Post', where);
 
   if (!p) return {
@@ -134,7 +134,7 @@ module.exports.update = async (req, _) => {
 };
 
 module.exports.delete = async (req, _) => {
-  const where = { id: req.payload.id };
+  const where = { id: req.params.post };
   const p = await database.findOne('Post', where);
 
   if (!p) return {

@@ -18,28 +18,22 @@ module.exports = [
   },
   {
     method: 'POST',
-    path: `/${base}/update`,
+    path: `/${base}/update/{post}`,
     config: {
       handler : controller.update,
       validate: {
         payload: {
           content: Joi.string().allow(''),
           title: Joi.string().allow(''),
-          id: Joi.number().required(),
         },
       },
     },
   },
   {
-    method: 'POST',
-    path: `/${base}/delete`,
+    method: 'GET',
+    path: `/${base}/delete/{post}`,
     config: {
       handler : controller.delete,
-      validate: {
-        payload: {
-          id: Joi.number().required(),
-        },
-      },
     },
   },
   {
