@@ -37,15 +37,7 @@ module.exports.upload = async (stream, id, type) => {
   };
 
   await pipe(stream, file);
-
-  try{
-    return file.getSignedUrl({ action: 'read' });
-  } catch(e) {
-    console.log(e);
-
-  }
-
-  // return file.getSignedUrl({ action: 'read' });
+  return (await file.getSignedUrl({ action: 'read' }))[0];
 };
 
 module.exports.update = async (type, oldId, newId) => {
@@ -59,7 +51,7 @@ module.exports.update = async (type, oldId, newId) => {
   await oldFile.copy(newName);
   await oldFile.delete();
   
-  return bucket.file(newName).getSignedUrl({ action: 'read' });
+  return (await bucket.file(newName).getSignedUrl({ action: 'read' }))[0];
 };
 
 module.exports.delete = async (id, type) => {
