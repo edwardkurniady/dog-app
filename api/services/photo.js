@@ -55,12 +55,12 @@ module.exports.update = async (type, oldId, newId) => {
   const oldFile = bucket.file(oldName);
   await oldFile.copy(newName);
   await oldFile.delete();
-  
+  try{
   return (await bucket.file(newName).getSignedUrl({
     action: 'read',
     version: 'v2',
     expires: '03-17-3000'
-  }))[0];
+  }))[0];}catch(E) {console.log(E)}
 };
 
 module.exports.delete = async (id, type) => {
