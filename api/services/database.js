@@ -2,7 +2,7 @@ const path = require('path');
 const root = path.resolve('.');
 const Model = require(`${root}/models`);
 const moment = require('moment-timezone');
-const crypt = require(`${root}/utils`);
+const { crypt } = require(`${root}/utils`);
 
 function processDate (data, model, options) {
   // if (!data) return consistent(data, model, options);
