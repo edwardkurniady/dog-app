@@ -38,7 +38,7 @@ module.exports.upload = async (stream, id, type) => {
 
   await pipe(stream, file);
 
-  return `${storageURL}/${filename}`;
+  return file.getSignedUrl({ action: read });
 };
 
 module.exports.update = async (type, oldId, newId) => {
@@ -52,7 +52,7 @@ module.exports.update = async (type, oldId, newId) => {
   await oldFile.copy(newName);
   await oldFile.delete();
   
-  return `${storageURL}/${newName}`;
+  return bucket.file(newName).getSignedUrl({ action: read });
 };
 
 module.exports.delete = async (id, type) => {
