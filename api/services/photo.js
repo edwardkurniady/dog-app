@@ -38,7 +38,7 @@ module.exports.upload = async (stream, id, type) => {
 
   await pipe(stream, file);
 
-  return `${storageURL}/${process.env.BUCKET_NAME}/${filename}`;
+  return `${storageURL}/${filename}`;
 };
 
 module.exports.update = async (type, oldId, newId) => {
@@ -52,7 +52,7 @@ module.exports.update = async (type, oldId, newId) => {
   await oldFile.copy(newName);
   await oldFile.delete();
   
-  return `${storageURL}/${process.env.BUCKET_NAME}/${newName}`;
+  return `${storageURL}/${newName}`;
 };
 
 module.exports.delete = async (id, type) => {
