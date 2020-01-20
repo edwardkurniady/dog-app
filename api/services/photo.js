@@ -1,6 +1,7 @@
 const path = require('path');
 const { storageURL } = require(path.resolve('.', 'const'));
 const { Storage } = require('@google-cloud/storage');
+const { crypt } = require(path.resolve('.', 'utils'));
 
 const initiateBucket = () => {
   const storage = new Storage({
@@ -38,11 +39,11 @@ module.exports.upload = async (stream, id, type) => {
 
   await pipe(stream, file);
 
-  return (await file.getSignedUrl({
+  return crypt.encrypt((await file.getSignedUrl({
     action: 'read',
     version: 'v2',
     expires: '03-17-3000'
-  }))[0];
+  }))[0]);
 };
 
 module.exports.update = async (type, oldId, newId) => {
@@ -56,11 +57,11 @@ module.exports.update = async (type, oldId, newId) => {
   await oldFile.copy(newName);
   await oldFile.delete();
   
-  return (await bucket.file(newName).getSignedUrl({
+  return crypt.encrypt((await bucket.file(newName).getSignedUrl({
     action: 'read',
     version: 'v2',
     expires: '03-17-3000'
-  }))[0];
+  }))[0]);
 };
 
 module.exports.delete = async (id, type) => {

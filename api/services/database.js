@@ -2,6 +2,7 @@ const path = require('path');
 const root = path.resolve('.');
 const Model = require(`${root}/models`);
 const moment = require('moment-timezone');
+const crypt = require(`${root}/utils`);
 
 function processDate (data, model, options) {
   // if (!data) return consistent(data, model, options);
@@ -12,6 +13,7 @@ function processDate (data, model, options) {
   const result = data.map(d => {
     if (d.dateOfBirth) d.dateOfBirth = moment(d.dateOfBirth, 'YYYY-MM-DD').format('DD-MM-YYYY');
     if (!d.createdAt) return consistent(d, model, options);
+    if (d.photo) d.photo = crypt.decrypt(d.photo);
     d.createdAt = moment(d.createdAt).tz('Asia/Jakarta').format('HH:mm:ss DD-MM-YYYY');
     return consistent(d, model, options);
   });
