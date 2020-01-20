@@ -41,6 +41,7 @@ module.exports.upload = async (stream, id, type) => {
     console.log(await file.getSignedUrl({
       action: 'read',
       version: 'v2',
+      expires: '03-17-3000'
     }))
   } catch(e) {console.log(e)}
   // return ()[0];
