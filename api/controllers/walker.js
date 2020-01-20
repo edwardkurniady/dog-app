@@ -52,7 +52,10 @@ module.exports.update = async (req, _) => {
   filter(req.payload);
   await database.update('Walker', req.payload, { id: req.payload.id });
   
-  return getDetails(req.payload.id);
+  return {
+    ...constants['200'],
+    body: null,
+  };
 };
 
 module.exports.get = async (req, _) => {
