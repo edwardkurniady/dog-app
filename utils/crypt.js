@@ -14,7 +14,7 @@ function stringToObject (str) {
 };
 
 function createCipher (type) {
-  const iv = new Buffer(16);
+  const iv = Buffer.alloc(16);
   const key = crypto
     .createHmac('sha256', process.env.ENCRYPTION_PASSWORD)
     .update(process.env.ENCRYPTION_KEY)
