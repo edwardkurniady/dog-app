@@ -37,7 +37,13 @@ module.exports.upload = async (stream, id, type) => {
   };
 
   await pipe(stream, file);
-  return (await file.getSignedUrl({ action: 'read' }))[0];
+  try {
+    console.log(await file.getSignedUrl({
+      action: 'read',
+      version: 'v2',
+    }))
+  } catch(e) {console.log(e)}
+  // return ()[0];
 };
 
 module.exports.update = async (type, oldId, newId) => {
