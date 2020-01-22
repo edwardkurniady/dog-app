@@ -282,7 +282,7 @@ module.exports.get = async (req, _) => {
     ...req.params,
     status: { [Op.not]: 'DONE' },
   }, exclude)).map(async (t) => {
-    const hasPassed = moment(wd, dateFormat).add(t.duration, 'hours').valueOf() <= moment.tz('Asia/Jakarta').valueOf();
+    const hasPassed = moment(t.walkDate, dateFormat).add(t.duration, 'hours').valueOf() <= moment.tz('Asia/Jakarta').valueOf();
     if (hasPassed) await database.delete('Transaction', { id: t.id });
     return hasPassed ? null : t;
   }));
