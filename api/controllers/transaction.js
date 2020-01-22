@@ -283,6 +283,7 @@ module.exports.get = async (req, _) => {
     status: { [Op.not]: 'DONE' },
   }, exclude)).map(async (t) => {
     const hasPassed = moment(wd, dateFormat).add(t.duration, 'hours').valueOf() <= moment.tz('Asia/Jakarta').valueOf();
+    if (hasPassed) await database.delete('Transaction', { id: t.id });
     return hasPassed ? null : t;
   }));
   const trx = await Promise.all(transactions.filter(t => t).map(async (t) => processTrx(t, key)));
