@@ -278,11 +278,14 @@ module.exports.get = async (req, _) => {
   const key = req.route.path.match(/\{(.*?)\?}/)[1];
   
   req.params[key] = req.params[key] || req.requester;
-  const transactions = await database.findAll('Transaction', {
+  const transactions = await Promise.all((await database.findAll('Transaction', {
     ...req.params,
     status: { [Op.not]: 'DONE' },
-  }, exclude);
-  const trx = await Promise.all(transactions.map(async (t) => processTrx(t, key)));
+  }, exclude)).map(async (t) => {
+    const hasPassed = moment(wd, dateFormat).add(t.duration, 'hours').valueOf() <= moment.tz('Asia/Jakarta').valueOf();
+    return hasPassed ? null : t;
+  }));
+  const trx = await Promise.all(transactions.filter(t => t).map(async (t) => processTrx(t, key)));
 
   const order = [
     'ONGOING',
