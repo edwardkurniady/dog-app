@@ -39,7 +39,7 @@ module.exports.upload = async (stream, id, type) => {
 
   await pipe(stream, file);
 
-  return `${storageURL}/${filename}`;
+  return `${storageURL}/${process.env.BUCKET_NAME}/${filename}`;
 
   // return crypt.encrypt((await file.getSignedUrl({
   //   action: 'read',
@@ -64,7 +64,7 @@ module.exports.update = async (type, oldId, newId) => {
   //   version: 'v2',
   //   expires: '03-17-3000'
   // }))[0]);
-  return `${storageURL}/${newName}`;
+  return `${storageURL}/${process.env.BUCKET_NAME}/${newName}`;
 };
 
 module.exports.delete = async (id, type) => {

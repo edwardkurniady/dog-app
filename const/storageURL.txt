@@ -1,1 +1,1 @@
-http://skripshit_bucket.storage.googleapis.com
+http://storage.googleapis.com
