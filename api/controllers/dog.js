@@ -62,7 +62,7 @@ module.exports.update = async (req, _) => {
   const doggo = await database.findOne('Dog', where);
   if (doggo.ownerId !== ownerId) return {
     ...constants['403'],
-    message: 'Permission denied!',
+    message: 'Anda tidak memiliki izin yang tepat!',
   };
   req.payload.photo = await photo.upload(
     req.payload.photo,
@@ -94,7 +94,7 @@ module.exports.delete = async (req, _) => {
   const doggo = await database.findOne('Dog', where);
   if (doggo.ownerId !== req.requester) return {
     ...constants['403'],
-    message: 'Permission denied!',
+    message: 'Anda tidak memiliki izin yang tepat!',
   };
 
   await photo.delete(req.payload.id, 'dog/profile');

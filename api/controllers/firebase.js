@@ -39,7 +39,7 @@ module.exports.notification = async (req, _) => {
     },
   });
   
-  const message = r.token ? null : 'User device not registered!';
+  const message = r.token ? null : 'Perangkat user belum terdaftar!';
   if (message) return {
     ...constants['404'],
     message,

@@ -45,9 +45,9 @@ module.exports.login = async (req, _) => {
   const usr = await database.findOne('User', where, options);
 
   errResp.message = !usr ?
-    'Phone number not registered!' : 
+    'Nomor telepon belum terdaftar!' : 
     usr.password != payload.password ?
-      'Wrong password!' :
+      'Password salah!' :
       null;
 
   if (errResp.message) return errResp;
@@ -74,7 +74,7 @@ module.exports.register = async (req, _) => {
 
   if (duplicate) return {
     ...constants['409'],
-    message: `duplicate ${key}!`,
+    message: `${key} telah terdaftar!`,
   };
   
   payload.photo = await photo.upload(
@@ -108,7 +108,7 @@ module.exports.update = async (req, _) => {
 
   if (duplicate && !isUserData) return {
     ...constants['409'],
-    message: `duplicate ${key}!`,
+    message: `${key} telah terdaftar!`,
   };
 
   payload.photo = await photo.upload(

@@ -64,7 +64,7 @@ module.exports.getList = async (req, _) => {
   });
   if (!p) return {
     ...constants['404'],
-    message: 'Post not found!',
+    message: 'Post tidak ditemukan!',
   };
 
   const comments = await database.findAll('Comment', {
@@ -83,7 +83,7 @@ module.exports.find = async (req, _) => {
   });
   if (!c) return {
     ...constants['404'],
-    message: 'Comment not found!',
+    message: 'Comment tidak ditemukan!',
   };
   return {
     ...constants['200'],
@@ -101,7 +101,7 @@ module.exports.upload = async (req, _) => {
   });
   if (!p) return {
     ...constants['404'],
-    message: 'Post not found!',
+    message: 'Post tidak ditemukan!',
   };
 
   await database.create('Comment', req.payload);

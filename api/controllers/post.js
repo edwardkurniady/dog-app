@@ -88,7 +88,7 @@ module.exports.find = async (req, _) => {
   });
   if (!p) return {
     ...constants['404'],
-    message: 'Post not found!',
+    message: 'Post tidak ditemukan!',
   };
   return {
     ...constants['200'],
@@ -116,11 +116,11 @@ module.exports.update = async (req, _) => {
 
   if (!p) return {
     ...constants['404'],
-    message: 'Post not found!',
+    message: 'Post tidak ditemukan!',
   };
   if (p.userId !== req.requester) return {
     ...constants['403'],
-    message: 'Permission denied!',
+    message: 'Anda tidak memiliki izin yang tepat!',
   };
 
   filter(req.payload);
@@ -139,11 +139,11 @@ module.exports.delete = async (req, _) => {
 
   if (!p) return {
     ...constants['404'],
-    message: 'Post not found!',
+    message: 'Post tidak ditemukan!',
   };
   if (p.userId !== req.requester) return {
     ...constants['403'],
-    message: 'Permission denied!',
+    message: 'Anda tidak memiliki izin yang tepat!',
   };
 
   await database.delete('Post', where);

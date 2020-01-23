@@ -192,17 +192,17 @@ module.exports.update = async (req, _) => {
   });
   if (!trx) return {
     ...constants['404'],
-    message: 'Transaction not found!',
+    message: 'Pesanan/ transaksi tidak ditemukan!',
   };
   if (trx.userId !== req.requester && trx.walkerId !== req.requester) return {
     ...constants['403'],
-    message: 'Permission denied!',
+    message: 'Anda tidak memiliki izin yang tepat!',
   };
 
   const available = await isAvailable(trx.walkerId, trx.walkDate, trx.duration);
   if (req.payload.status === 'APPROVED' && !available) return {
     ...constants['409'],
-    message: 'Walker busy at that time!',
+    message: 'Walker sibuk disaat itu! Silahkan pilih walker lain',
   };
 
   await processStatus(req.payload.status, trx, {
@@ -238,17 +238,17 @@ module.exports.status = async (req, _) => {
   const trx = await database.findOne('Transaction', { id: transactionId });
   if (!trx) return {
     ...constants['404'],
-    message: 'Transaction not found!',
+    message: 'Pesanan/ transaksi tidak ditemukan!',
   };
   if (trx.userId !== req.requester && trx.walkerId !== req.requester) return {
     ...constants['403'],
-    message: 'Permission denied!',
+    message: 'Anda tidak memiliki izin yang tepat!',
   };
 
   const available = await isAvailable(trx.walkerId, trx.walkDate, trx.duration);
   if (req.payload.status === 'APPROVED' && !available) return {
     ...constants['409'],
-    message: 'Walker busy at that time!',
+    message: 'Walker sibuk disaat itu! Silahkan pilih walker lain',
   };
   await processStatus(status, trx, { transactionId });
 
@@ -264,7 +264,7 @@ module.exports.reject = async (req, _) => {
   const t = await database.findOne('Transaction', where);
   if (t.walkerId !== req.requester) return {
     ...constants['403'],
-    message: 'Permission denied!',
+    message: 'Anda tidak memiliki izin yang tepat!',
   };
   await database.delete('Transaction', where);
 

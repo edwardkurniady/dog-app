@@ -17,7 +17,7 @@ const getDetails = async (id) => {
   const walker = await database.findOne('Walker', { id }, options);
   if (!walker) return {
     ...constants['404'],
-    message: 'walker not found!',
+    message: 'walker tidak ditemukan!',
   };
   const usr = await database.findOne('User', { id }, options);
   return {
@@ -74,7 +74,7 @@ module.exports.rate = async (req, _) => {
   });
   if (!w) return {
     ...constants['404'],
-    message: 'walker not found!',
+    message: 'walker tidak ditemukan!',
   };
 
   w.raters = w.raters + 1;
