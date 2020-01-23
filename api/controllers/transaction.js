@@ -278,14 +278,16 @@ module.exports.get = async (req, _) => {
   const key = req.route.path.match(/\{(.*?)\?}/)[1];
   
   req.params[key] = req.params[key] || req.requester;
-  const transactions = await Promise.all((await database.findAll('Transaction', {
+  const transactions = await Promise.all(database.findAll('Transaction', {
     ...req.params,
     status: { [Op.not]: 'DONE' },
   }, exclude)).map(async (t) => {
-    const hasPassed = moment(t.walkDate, dateFormat).add(t.duration, 'hours').valueOf() <= moment.tz('Asia/Jakarta').valueOf();
+    const wd = moment(t.walkDate, dateFormat);
+    const walkDate = t.status === 'PENDING' ? wd : wd.add(t.duration, 'hours');
+    const hasPassed = walkDate.valueOf() <= moment.tz('Asia/Jakarta').valueOf();
     if (hasPassed) await database.delete('Transaction', { id: t.id });
     return hasPassed ? null : t;
-  }));
+  });
   const trx = await Promise.all(transactions.filter(t => t).map(async (t) => processTrx(t, key)));
 
   const order = [
