@@ -288,7 +288,6 @@ module.exports.get = async (req, _) => {
     if (hasPassed) await database.delete('Transaction', { id: t.id });
     return hasPassed ? null : t;
   })).filter(t => t);
-  console.log(transactions)
   const trx = await Promise.all(transactions.map(async (t) => processTrx(t, key)));
 
   const order = [
