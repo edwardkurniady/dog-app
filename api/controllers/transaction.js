@@ -86,8 +86,8 @@ async function isAvailable (walkerId, walkDate, duration) {
 
 async function processStatus (status, trx, where) {
   if (!status) return;
-  if (status === 'SELESAI') await database.delete('Schedule', where);
-  if (status !== 'DITERIMA') return;
+  if (status === 'DONE') await database.delete('Schedule', where);
+  if (status !== 'diterima') return;
 
   const m = moment(trx.walkDate, dateFormat);
   await database.create('Schedule', {
@@ -140,7 +140,7 @@ module.exports.findawalker = async (req, _) => {
 };
 
 module.exports.order = async (req, _) => {
-  req.payload.status = 'MENUNGGU KONFIRMASI';
+  req.payload.status = 'menunggu';
   req.payload.userId = req.requester;
   req.payload.walkDate = moment(req.payload.walkDate).format(dateFormat);
   req.payload.isRated = false;
@@ -175,7 +175,7 @@ module.exports.order = async (req, _) => {
 module.exports.isRated = async (req, _) => {
   const trx = await database.findAll('Transaction', {
     userId: req.requester,
-    status: { [Op.in]: [ 'SELESAI' ] },
+    status: { [Op.in]: [ 'DONE' ] },
   });
   const m = (wd) => moment(wd, dateFormat).valueOf();
 
@@ -200,7 +200,7 @@ module.exports.update = async (req, _) => {
   };
 
   const available = await isAvailable(trx.walkerId, trx.walkDate, trx.duration);
-  if (req.payload.status === 'APPROVED' && !available) return {
+  if (req.payload.status === 'diterima' && !available) return {
     ...constants['409'],
     message: 'Walker sibuk disaat itu! Silahkan pilih walker lain',
   };
@@ -280,10 +280,10 @@ module.exports.get = async (req, _) => {
   req.params[key] = req.params[key] || req.requester;
   const transactions = (await Promise.all(database.findAll('Transaction', {
     ...req.params,
-    status: { [Op.not]: 'SELESAI' },
+    status: { [Op.not]: 'DONE' },
   }, exclude)).map(async (t) => {
     const wd = moment(t.walkDate, dateFormat);
-    const walkDate = t.status === 'MENUNGGU KONFIRMASI' ? wd : wd.add(t.duration, 'hours');
+    const walkDate = t.status === 'menunggu' ? wd : wd.add(t.duration, 'hours');
     const hasPassed = walkDate.valueOf() <= moment.tz('Asia/Jakarta').valueOf();
     if (hasPassed) await database.delete('Transaction', { id: t.id });
     return hasPassed ? null : t;
@@ -291,9 +291,9 @@ module.exports.get = async (req, _) => {
   const trx = await Promise.all(transactions.map(async (t) => processTrx(t, key)));
 
   const order = [
-    'SEDANG BERJALAN',
-    'MENUNGGU KONFIRMASI',
-    'DITERIMA',
+    'berlangsung',
+    'menunggu',
+    'diterima',
   ];
   const m = (wd) => moment(wd, dateFormat).valueOf();
 
