@@ -36,7 +36,7 @@ module.exports = [
           beforePhoto: Joi.object().allow(null).type(Readable),
           // distance: Joi.number().allow(null),
           poopPhoto: Joi.object().allow(null).type(Readable),
-          status: Joi.string().valid('APPROVED', 'ONGOING', 'DONE', ''),
+          status: Joi.string().valid('DITERIMA', 'SEDANG BERJALAN', 'SELESAI', ''),
           id: Joi.number().required(),
         },
       },
@@ -66,7 +66,7 @@ module.exports = [
       validate: {
         payload: {
           transactionId: Joi.number().required(),
-          status: Joi.string().valid('APPROVED', 'ONGOING', 'DONE').required(),
+          status: Joi.string().valid('DITERIMA', 'SEDANG BERJALAN', 'SELESAI').required(),
         },
       },
     },

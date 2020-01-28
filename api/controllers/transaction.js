@@ -86,8 +86,8 @@ async function isAvailable (walkerId, walkDate, duration) {
 
 async function processStatus (status, trx, where) {
   if (!status) return;
-  if (status === 'DONE') await database.delete('Schedule', where);
-  if (status !== 'APPROVED') return;
+  if (status === 'SELESAI') await database.delete('Schedule', where);
+  if (status !== 'DITERIMA') return;
 
   const m = moment(trx.walkDate, dateFormat);
   await database.create('Schedule', {
@@ -140,7 +140,7 @@ module.exports.findawalker = async (req, _) => {
 };
 
 module.exports.order = async (req, _) => {
-  req.payload.status = 'PENDING';
+  req.payload.status = 'MENUNGGU KONFIRMASI';
   req.payload.userId = req.requester;
   req.payload.walkDate = moment(req.payload.walkDate).format(dateFormat);
   req.payload.isRated = false;
@@ -175,7 +175,7 @@ module.exports.order = async (req, _) => {
 module.exports.isRated = async (req, _) => {
   const trx = await database.findAll('Transaction', {
     userId: req.requester,
-    status: { [Op.in]: [ 'DONE' ] },
+    status: { [Op.in]: [ 'SELESAI' ] },
   });
   const m = (wd) => moment(wd, dateFormat).valueOf();
 
@@ -280,10 +280,10 @@ module.exports.get = async (req, _) => {
   req.params[key] = req.params[key] || req.requester;
   const transactions = (await Promise.all(database.findAll('Transaction', {
     ...req.params,
-    status: { [Op.not]: 'DONE' },
+    status: { [Op.not]: 'SELESAI' },
   }, exclude)).map(async (t) => {
     const wd = moment(t.walkDate, dateFormat);
-    const walkDate = t.status === 'PENDING' ? wd : wd.add(t.duration, 'hours');
+    const walkDate = t.status === 'MENUNGGU KONFIRMASI' ? wd : wd.add(t.duration, 'hours');
     const hasPassed = walkDate.valueOf() <= moment.tz('Asia/Jakarta').valueOf();
     if (hasPassed) await database.delete('Transaction', { id: t.id });
     return hasPassed ? null : t;
@@ -291,9 +291,9 @@ module.exports.get = async (req, _) => {
   const trx = await Promise.all(transactions.map(async (t) => processTrx(t, key)));
 
   const order = [
-    'ONGOING',
-    'PENDING',
-    'APPROVED',
+    'SEDANG BERJALAN',
+    'MENUNGGU KONFIRMASI',
+    'DITERIMA',
   ];
   const m = (wd) => moment(wd, dateFormat).valueOf();
 
