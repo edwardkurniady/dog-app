@@ -313,24 +313,26 @@ module.exports.find = async (req, _) => {
   const trx = await database.findOne('Transaction', {
     id: req.params.id,
   }, exclude);
-  const detail = await database.findOne('TransactionDetail', {
-    transactionId: req.params.id,
-  });
 
-  const walker = trx.walkerId ? (await Walker.get({
-    params: { walker: trx.walkerId },
-  })).body : null;
+  return processTrx(trx);
+  // const detail = await database.findOne('TransactionDetail', {
+  //   transactionId: req.params.id,
+  // });
 
-  return {
-    ...trx,
-    walker,
-    // dogs: await Promise.all(detail.map(async (dt) => {
-    //   return (await Dog.find({
-    //     params: { dog: dt.dogId },
-    //   })).body;
-    // })),
-    dog: (await Dog.find({
-      params: { dog: detail.dogId },
-    })).body,
-  };
+  // const walker = trx.walkerId ? (await Walker.get({
+  //   params: { walker: trx.walkerId },
+  // })).body : null;
+
+  // return {
+  //   ...trx,
+  //   walker,
+  //   // dogs: await Promise.all(detail.map(async (dt) => {
+  //   //   return (await Dog.find({
+  //   //     params: { dog: dt.dogId },
+  //   //   })).body;
+  //   // })),
+  //   dog: (await Dog.find({
+  //     params: { dog: detail.dogId },
+  //   })).body,
+  // };
 };
