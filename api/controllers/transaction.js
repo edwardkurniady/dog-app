@@ -32,9 +32,9 @@ async function processTrx (t, key = 'userId') {
     userId: 'walkerId',
     walkerId: 'userId',
   };
+  const { address } = await database.findOne('User', { id: t.userId });
   const {
     name,
-    address,
     phoneNumber,
     photo,
   } = await database.findOne('User', {
