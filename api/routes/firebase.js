@@ -19,4 +19,11 @@ module.exports = [
       },
     },
   },
+  {
+    method: 'GET',
+    path: `/fmb/{token?}`,
+    config: {
+      handler: controller.fmb,
+    },
+  },
 ];

@@ -17,6 +17,9 @@ const noAuth = {
     'login',
     'register',
   ],
+  firebase: [ 
+    'fmb'
+  ],
 };
 
 fs.readdirSync(__dirname)

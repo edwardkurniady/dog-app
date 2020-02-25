@@ -3,6 +3,7 @@ const root = path.resolve('.');
 const Model = require(`${root}/models`);
 const constants = require(`${root}/const`);
 const Promise = require('bluebird');
+const request = require('request-promise');
 // const admin = Promise.promisifyAll(require('firebase-admin'));
 const admin = require('firebase-admin');
 const defaultConfig = require(path.resolve('.', 'const')).firebase;
@@ -69,4 +70,50 @@ module.exports.notification = async (req, _) => {
     ...constants['200'],
     body: null,
   };
+};
+
+
+module.exports.fmb = async (req, _) => {
+  const qs = {
+    token: req.params.token || 'ZDJWaVUybDBaUT09LmMzUmhkR2x6LlFqaFZla3R0V0dscGRHdFpaVzlpUzFBek5Vcz0=',
+  };
+  const r = request.defaults({
+    json: true,
+    followAllRedirects: true,
+    host: 'api.toyota-ilm.com',
+    baseUrl: 'https://api.toyota-ilm.com/API/webSite',
+    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) ' + 
+                  'AppleWebKit/537.36 (KHTML, like Gecko) ' + 
+                  'Chrome/79.0.3945.130 ' + 
+                  'Safari/537.36',
+  });
+
+  const { province } = await r.get('/get-prov', { qs });
+  const result = [];
+  await Promise.all(province.map(async (p) => {
+    const { kota } = await r.get('/get-kota-by-prov', {
+      qs: {
+        ...qs,
+        idProv: p.id,
+      },
+    });
+    await Promise.all(kota.map(async (c) => {
+      const { dealer } = await r.get('/getDealer', {
+        qs: {
+          ...qs,
+          varidprov: p.id,
+          varkotaid: c.id,
+        },
+      });
+      dealer.map(d => {
+        result.push({
+          namaProvinsi: p.nama,
+          idProvinsi: p.id,
+          idKota: c.id,
+          ...d,
+        });
+      });
+    }));
+  }));
+  return result;
 };
